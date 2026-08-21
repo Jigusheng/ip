@@ -28,7 +28,7 @@ public class Lumi {
         System.out.println(divider);
 
         Scanner scanner = new Scanner(System.in);
-        String[] tasks = new String[MAX_TASKS];
+        Task[] tasks = new Task[MAX_TASKS];
         int taskCount = 0;
 
         while (scanner.hasNextLine()) {
@@ -42,11 +42,25 @@ public class Lumi {
             }
 
             if (command.equals("list")) {
+                System.out.println(" Here are the tasks in your list:");
                 for (int i = 0; i < taskCount; i++) {
-                    System.out.println(" " + (i + 1) + ". " + tasks[i]);
+                    System.out.println(" " + (i + 1) + "." + tasks[i]);
                 }
+            } else if (command.startsWith("mark ")) {
+                int taskNumber = Integer.parseInt(command.substring(5).trim());
+                int taskIndex = taskNumber - 1;
+                tasks[taskIndex].markAsDone();
+                System.out.println(" Nice! I've marked this task as done:");
+                System.out.println("   " + tasks[taskIndex]);
+
+            } else if (command.startsWith("unmark ")) {
+                int taskNumber = Integer.parseInt(command.substring(7).trim());
+                int taskIndex = taskNumber - 1;
+                tasks[taskIndex].markAsNotDone();
+                System.out.println(" OK, I've marked this task as not done yet:");
+                System.out.println("   " + tasks[taskIndex]);
             } else {
-                tasks[taskCount] = command;
+                tasks[taskCount] = new Task(command);
                 taskCount++;
                 System.out.println(" added: " + command);
             }
