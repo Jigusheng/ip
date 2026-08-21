@@ -25,4 +25,6 @@ Use `test/ui-test-plan.md` as the source of truth for console UI cases.
 
 Follow the format already used in `test/ui-test-plan.md`. Put commands in the `Inputs` text fence. Put the corresponding response blocks in the `Expected outputs` text fence, in the same order, separated by a line containing only `---`.
 
+Use `<EMPTY>` on an input line to test an empty command. Interleave invalid commands with valid commands and later `list` checks when state preservation matters; this detects error paths that accidentally add or modify tasks.
+
 Expected blocks contain the text inside Lumi's divider lines. The runner checks divider placement separately, ignores platform line-ending differences and trailing whitespace, and preserves leading whitespace. Startup output is shown in the transcript but is not repeated in every expected block.

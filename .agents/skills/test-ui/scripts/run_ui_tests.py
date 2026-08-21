@@ -61,12 +61,15 @@ def load_test_cases(plan_path: Path) -> list[UiTestCase]:
         if not aim_match:
             raise ValueError(f"{name}: missing Aim")
 
-        commands = fenced_block(section, "Inputs", name).splitlines()
+        input_lines = fenced_block(section, "Inputs", name).splitlines()
+        commands = ["" if line == "<EMPTY>" else line for line in input_lines]
         expected_text = fenced_block(section, "Expected outputs", name)
         expected_responses = [normalize_output(block) for block in expected_text.split("\n---\n")]
 
-        if not commands or any(command == "" for command in commands):
-            raise ValueError(f"{name}: Inputs must contain one non-empty command per line")
+        if not commands or any(line == "" for line in input_lines):
+            raise ValueError(
+                f"{name}: use <EMPTY> to represent an empty input command"
+            )
         if len(commands) != len(expected_responses):
             raise ValueError(
                 f"{name}: found {len(commands)} commands but "
@@ -168,7 +171,8 @@ def print_transcript(
     print(startup)
     print(DIVIDER)
     for command, response in zip(case.commands[:limit], responses[:limit]):
-        print(f"> {command}")
+        displayed_command = command if command else "<EMPTY>"
+        print(f"> {displayed_command}")
         print(DIVIDER)
         print(response)
         print(DIVIDER)
@@ -204,7 +208,8 @@ def run_case(case: UiTestCase, project_root: Path, class_dir: Path) -> bool:
             zip(actual_responses, case.expected_responses), start=1):
         if normalize_output(actual) != normalize_output(expected):
             print_transcript(case, startup, actual_responses, response_limit=index)
-            print(f"FAIL: {case.name}, command {index}: {case.commands[index - 1]}")
+            failed_command = case.commands[index - 1] or "<EMPTY>"
+            print(f"FAIL: {case.name}, command {index}: {failed_command}")
             print("Expected output:")
             print(expected or "<empty>")
             print("Actual output:")

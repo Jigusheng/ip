@@ -35,6 +35,8 @@ After each code update:
 1. Review `test/ui-test-plan.md` and update it when the intended console behavior changes or new behavior needs coverage.
 2. Invoke the project-specific `test-ui` skill and report its result. Stop at the first failed UI test and include the actual and expected output.
 
+When commands are added or changed, cover relevant malformed and boundary inputs. Interleave invalid commands with valid commands and later `list` checks so tests verify that rejected inputs do not alter task state.
+
 ## Git
 
 Use lightweight tags unless the user requests an annotated tag.
