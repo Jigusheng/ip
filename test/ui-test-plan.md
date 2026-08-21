@@ -109,7 +109,7 @@ bye
 ---
  Hmm, a todo needs a description. Try: todo <description>
 ---
- Hmm, I don't recognize that command. Try todo, deadline, event, list, mark, unmark, or bye.
+ Hmm, I don't recognize that command. Try todo, deadline, event, list, mark, unmark, delete, or bye.
 ---
  Hmm, a deadline needs a due date. Try: deadline <description> /by <when>
 ---
@@ -139,7 +139,137 @@ bye
  Bye for now! Keep shining, and I hope to see you again soon!
 ```
 
-## TC-04: Invalid mark commands preserve status
+## TC-04: Delete tasks and renumber the list
+
+Aim: Verify deleting a task returns the removed task, decreases the count, and shifts later task numbers without changing their details or statuses.
+
+### Inputs
+
+```text
+todo read book
+deadline return book /by June 6th
+event project meeting /from Aug 6th 2pm /to 4pm
+mark 1
+mark 2
+list
+delete 3
+list
+delete 1
+list
+bye
+```
+
+### Expected outputs
+
+```text
+ Got it. I've added this task:
+   [T][ ] read book
+ Now you have 1 tasks in the list.
+---
+ Got it. I've added this task:
+   [D][ ] return book (by: June 6th)
+ Now you have 2 tasks in the list.
+---
+ Got it. I've added this task:
+   [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+ Now you have 3 tasks in the list.
+---
+ Nice! I've marked this task as done:
+   [T][X] read book
+---
+ Nice! I've marked this task as done:
+   [D][X] return book (by: June 6th)
+---
+ Here are the tasks in your list:
+ 1.[T][X] read book
+ 2.[D][X] return book (by: June 6th)
+ 3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+---
+ Noted. I've removed this task:
+   [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+ Now you have 2 tasks in the list.
+---
+ Here are the tasks in your list:
+ 1.[T][X] read book
+ 2.[D][X] return book (by: June 6th)
+---
+ Noted. I've removed this task:
+   [T][X] read book
+ Now you have 1 tasks in the list.
+---
+ Here are the tasks in your list:
+ 1.[D][X] return book (by: June 6th)
+---
+ Bye for now! Keep shining, and I hope to see you again soon!
+```
+
+## TC-05: Invalid delete commands preserve the list
+
+Aim: Verify empty-list, missing, non-numeric, and out-of-range delete commands are rejected without removing or modifying tasks.
+
+### Inputs
+
+```text
+delete 1
+todo keep this task
+deadline remove this task /by tomorrow
+delete
+delete first
+delete 0
+delete 3
+list
+delete 2
+delete 2
+list
+delete 1
+list
+bye
+```
+
+### Expected outputs
+
+```text
+ Hmm, there are no tasks to delete yet.
+---
+ Got it. I've added this task:
+   [T][ ] keep this task
+ Now you have 1 tasks in the list.
+---
+ Got it. I've added this task:
+   [D][ ] remove this task (by: tomorrow)
+ Now you have 2 tasks in the list.
+---
+ Hmm, tell me which task to delete. Try: delete <task number>
+---
+ Hmm, the task number must be a whole number.
+---
+ Hmm, choose a task number from 1 to 2.
+---
+ Hmm, choose a task number from 1 to 2.
+---
+ Here are the tasks in your list:
+ 1.[T][ ] keep this task
+ 2.[D][ ] remove this task (by: tomorrow)
+---
+ Noted. I've removed this task:
+   [D][ ] remove this task (by: tomorrow)
+ Now you have 1 tasks in the list.
+---
+ Hmm, choose a task number from 1 to 1.
+---
+ Here are the tasks in your list:
+ 1.[T][ ] keep this task
+---
+ Noted. I've removed this task:
+   [T][ ] keep this task
+ Now you have 0 tasks in the list.
+---
+ Here are the tasks in your list:
+---
+ Bye for now! Keep shining, and I hope to see you again soon!
+```
+
+## TC-06: Invalid mark commands preserve status
 
 Aim: Verify missing, non-numeric, and out-of-range task numbers are handled without changing the selected task's status.
 
