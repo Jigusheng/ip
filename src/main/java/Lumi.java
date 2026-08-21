@@ -60,11 +60,40 @@ public class Lumi {
                 System.out.println(" OK, I've marked this task as not done yet:");
                 System.out.println("   " + tasks[taskIndex]);
             } else {
-                tasks[taskCount] = new Task(command);
+                Task newTask = createTask(command);
+                tasks[taskCount] = newTask;
                 taskCount++;
-                System.out.println(" added: " + command);
+                System.out.println(" Got it. I've added this task:");
+                System.out.println("   " + newTask);
+                System.out.println(" Now you have " + taskCount + " tasks in the list.");
             }
             System.out.println(divider);
         }
+    }
+
+    /**
+     * Creates the task represented by an add command.
+     * Date and time details are deliberately retained as plain text.
+     *
+     * @param command command entered by the user
+     * @return a to-do, deadline, or event based on the command prefix
+     */
+    private static Task createTask(String command) {
+        if (command.startsWith("todo ")) {
+            return new Todo(command.substring(5).trim());
+        }
+
+        if (command.startsWith("deadline ")) {
+            String[] details = command.substring(9).split(" /by ", 2);
+            return new Deadline(details[0].trim(), details[1].trim());
+        }
+
+        if (command.startsWith("event ")) {
+            String[] descriptionAndTimes = command.substring(6).split(" /from ", 2);
+            String[] times = descriptionAndTimes[1].split(" /to ", 2);
+            return new Event(descriptionAndTimes[0].trim(), times[0].trim(), times[1].trim());
+        }
+
+        return new Todo(command.trim());
     }
 }
