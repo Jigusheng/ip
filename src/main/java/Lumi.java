@@ -30,40 +30,41 @@ public class Lumi {
 
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine().trim();
+            CommandType commandType = CommandType.from(command);
 
             System.out.println(divider);
-            if (command.equals("bye")) {
+            if (commandType == CommandType.BYE) {
                 System.out.println(" Bye for now! Keep shining, and I hope to see you again soon!");
                 System.out.println(divider);
                 break;
             }
 
             try {
-                if (command.equals("list")) {
+                if (commandType == CommandType.LIST) {
                     System.out.println(" Here are the tasks in your list:");
                     for (int i = 0; i < tasks.size(); i++) {
                         System.out.println(" " + (i + 1) + "." + tasks.get(i));
                     }
-                } else if (isCommand(command, "mark")) {
-                    int taskIndex = parseTaskIndex(command, "mark", tasks.size());
+                } else if (commandType == CommandType.MARK) {
+                    int taskIndex = parseTaskIndex(command, commandType, tasks.size());
                     tasks.get(taskIndex).markAsDone();
                     System.out.println(" Nice! I've marked this task as done:");
                     System.out.println("   " + tasks.get(taskIndex));
-                } else if (isCommand(command, "unmark")) {
-                    int taskIndex = parseTaskIndex(command, "unmark", tasks.size());
+                } else if (commandType == CommandType.UNMARK) {
+                    int taskIndex = parseTaskIndex(command, commandType, tasks.size());
                     tasks.get(taskIndex).markAsNotDone();
                     System.out.println(" OK, I've marked this task as not done yet:");
                     System.out.println("   " + tasks.get(taskIndex));
-                } else if (isCommand(command, "delete")) {
-                    int taskIndex = parseTaskIndex(command, "delete", tasks.size());
+                } else if (commandType == CommandType.DELETE) {
+                    int taskIndex = parseTaskIndex(command, commandType, tasks.size());
                     Task removedTask = tasks.remove(taskIndex);
                     System.out.println(" Noted. I've removed this task:");
                     System.out.println("   " + removedTask);
                     System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
-                } else if (isCommand(command, "todo")
-                        || isCommand(command, "deadline")
-                        || isCommand(command, "event")) {
-                    Task newTask = createTask(command);
+                } else if (commandType == CommandType.TODO
+                        || commandType == CommandType.DEADLINE
+                        || commandType == CommandType.EVENT) {
+                    Task newTask = createTask(command, commandType);
                     tasks.add(newTask);
                     System.out.println(" Got it. I've added this task:");
                     System.out.println("   " + newTask);
@@ -86,12 +87,13 @@ public class Lumi {
      * Date and time details are deliberately retained as plain text.
      *
      * @param command command entered by the user
+     * @param commandType type of task creation command
      * @return a to-do, deadline, or event based on the command prefix
      * @throws LumiException if required task details are missing
      */
-    private static Task createTask(String command) throws LumiException {
-        if (isCommand(command, "todo")) {
-            String description = command.substring("todo".length()).trim();
+    private static Task createTask(String command, CommandType commandType) throws LumiException {
+        if (commandType == CommandType.TODO) {
+            String description = command.substring(commandType.getKeyword().length()).trim();
             if (description.isEmpty()) {
                 throw new LumiException("Hmm, a todo needs a description. "
                         + "Try: todo <description>");
@@ -99,8 +101,8 @@ public class Lumi {
             return new Todo(description);
         }
 
-        if (isCommand(command, "deadline")) {
-            String details = command.substring("deadline".length()).trim();
+        if (commandType == CommandType.DEADLINE) {
+            String details = command.substring(commandType.getKeyword().length()).trim();
             int byPosition = findSeparator(details, "/by", 0);
             if (byPosition < 0) {
                 throw new LumiException("Hmm, a deadline needs a due date. "
@@ -118,8 +120,8 @@ public class Lumi {
             return new Deadline(description, by);
         }
 
-        if (isCommand(command, "event")) {
-            String details = command.substring("event".length()).trim();
+        if (commandType == CommandType.EVENT) {
+            String details = command.substring(commandType.getKeyword().length()).trim();
             int fromPosition = findSeparator(details, "/from", 0);
             int toPosition = fromPosition < 0
                     ? -1
@@ -151,13 +153,14 @@ public class Lumi {
      * Converts a task command's user-facing number to a list index.
      *
      * @param command complete command entered by the user
-     * @param action command word, such as {@code mark}, {@code unmark}, or {@code delete}
+     * @param commandType type of task command, such as mark, unmark, or delete
      * @param taskCount number of tasks currently stored
      * @return the zero-based index of the selected task
      * @throws LumiException if the number is missing, invalid, or out of range
      */
-    private static int parseTaskIndex(String command, String action, int taskCount)
+    private static int parseTaskIndex(String command, CommandType commandType, int taskCount)
             throws LumiException {
+        String action = commandType.getKeyword();
         String argument = command.substring(action.length()).trim();
         if (argument.isEmpty()) {
             throw new LumiException("Hmm, tell me which task to " + action
@@ -178,17 +181,6 @@ public class Lumi {
             throw new LumiException("Hmm, choose a task number from 1 to " + taskCount + ".");
         }
         return taskNumber - 1;
-    }
-
-    /**
-     * Checks whether the input is a command word with an optional argument.
-     *
-     * @param input complete user input
-     * @param commandWord command word to match
-     * @return true if the input starts with the complete command word
-     */
-    private static boolean isCommand(String input, String commandWord) {
-        return input.equals(commandWord) || input.startsWith(commandWord + " ");
     }
 
     /**

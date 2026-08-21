@@ -88,6 +88,8 @@ Aim: Verify specific explanations for malformed or unknown inputs and confirm th
 <EMPTY>
 todo
 blah
+list later
+bye now
 deadline return book
 deadline /by Sunday
 deadline return book /by
@@ -108,6 +110,10 @@ bye
  Hmm, please enter a command.
 ---
  Hmm, a todo needs a description. Try: todo <description>
+---
+ Hmm, I don't recognize that command. Try todo, deadline, event, list, mark, unmark, delete, or bye.
+---
+ Hmm, I don't recognize that command. Try todo, deadline, event, list, mark, unmark, delete, or bye.
 ---
  Hmm, I don't recognize that command. Try todo, deadline, event, list, mark, unmark, delete, or bye.
 ---
