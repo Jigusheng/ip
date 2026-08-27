@@ -1,6 +1,6 @@
 # Console UI test plan
 
-Each test case runs in a fresh Lumi process. Expected response blocks correspond to the input commands in order and are separated by a line containing only `---`. The test runner checks the surrounding divider lines separately.
+Each test case runs in a fresh Lumi process and an isolated temporary working folder. Expected response blocks correspond to the input commands in order and are separated by a line containing only `---`. The test runner checks the surrounding divider lines separately. A case can provide `Initial data` to prepare its data file and `Expected data` to check the final saved records.
 
 ## TC-01: Mixed task types and status changes
 
@@ -332,4 +332,67 @@ bye
  1.[T][ ] read book
 ---
  Bye for now! Keep shining, and I hope to see you again soon!
+```
+
+## TC-07: Load and automatically save tasks
+
+Aim: Verify valid saved tasks and statuses load at startup, a malformed line is skipped, and each kind of successful list mutation is reflected in the final data file.
+
+### Initial data
+
+```text
+T | 1 | read book
+D | 0 | return book | June 6th
+this line is corrupted
+E | 0 | project meeting | Aug 6th 2pm | 4pm
+```
+
+### Inputs
+
+```text
+list
+unmark 1
+mark 2
+delete 3
+todo join sports club
+list
+bye
+```
+
+### Expected outputs
+
+```text
+ Here are the tasks in your list:
+ 1.[T][X] read book
+ 2.[D][ ] return book (by: June 6th)
+ 3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+---
+ OK, I've marked this task as not done yet:
+   [T][ ] read book
+---
+ Nice! I've marked this task as done:
+   [D][X] return book (by: June 6th)
+---
+ Noted. I've removed this task:
+   [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+ Now you have 2 tasks in the list.
+---
+ Got it. I've added this task:
+   [T][ ] join sports club
+ Now you have 3 tasks in the list.
+---
+ Here are the tasks in your list:
+ 1.[T][ ] read book
+ 2.[D][X] return book (by: June 6th)
+ 3.[T][ ] join sports club
+---
+ Bye for now! Keep shining, and I hope to see you again soon!
+```
+
+### Expected data
+
+```text
+T | 0 | read book
+D | 1 | return book | June 6th
+T | 0 | join sports club
 ```

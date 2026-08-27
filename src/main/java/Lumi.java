@@ -1,10 +1,16 @@
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
  * Starts the Lumi chatbot application.
  */
 public class Lumi {
+    /** Portable path to the task data file, relative to the project root. */
+    private static final Path DATA_FILE = Path.of("data", "lumi.txt");
+
     /**
      * Runs the chatbot and processes user input until the user enters {@code bye}.
      *
@@ -23,10 +29,21 @@ public class Lumi {
         System.out.println("Hi there! I'm Lumi, your bright and bubbly chat buddy!");
         System.out.println("I'm popping in to sprinkle a little cheer your way.");
         System.out.println("What can I brighten up for you today?");
+        Storage storage = new Storage(DATA_FILE);
+        ArrayList<Task> tasks = new ArrayList<>();
+        try {
+            Storage.LoadResult loadResult = storage.load();
+            tasks.addAll(loadResult.tasks());
+            if (loadResult.skippedLineCount() > 0) {
+                System.out.println("I found " + loadResult.skippedLineCount()
+                        + " invalid line(s) in the saved task file and skipped them.");
+            }
+        } catch (IOException error) {
+            System.out.println("I couldn't load saved tasks, so I'm starting with an empty list.");
+        }
         System.out.println(divider);
 
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Task> tasks = new ArrayList<>();
 
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine().trim();
@@ -50,17 +67,20 @@ public class Lumi {
                     tasks.get(taskIndex).markAsDone();
                     System.out.println(" Nice! I've marked this task as done:");
                     System.out.println("   " + tasks.get(taskIndex));
+                    saveTasks(storage, tasks);
                 } else if (commandType == CommandType.UNMARK) {
                     int taskIndex = parseTaskIndex(command, commandType, tasks.size());
                     tasks.get(taskIndex).markAsNotDone();
                     System.out.println(" OK, I've marked this task as not done yet:");
                     System.out.println("   " + tasks.get(taskIndex));
+                    saveTasks(storage, tasks);
                 } else if (commandType == CommandType.DELETE) {
                     int taskIndex = parseTaskIndex(command, commandType, tasks.size());
                     Task removedTask = tasks.remove(taskIndex);
                     System.out.println(" Noted. I've removed this task:");
                     System.out.println("   " + removedTask);
                     System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+                    saveTasks(storage, tasks);
                 } else if (commandType == CommandType.TODO
                         || commandType == CommandType.DEADLINE
                         || commandType == CommandType.EVENT) {
@@ -69,6 +89,7 @@ public class Lumi {
                     System.out.println(" Got it. I've added this task:");
                     System.out.println("   " + newTask);
                     System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+                    saveTasks(storage, tasks);
                 } else if (command.isEmpty()) {
                     throw new LumiException("Hmm, please enter a command.");
                 } else {
@@ -79,6 +100,21 @@ public class Lumi {
                 System.out.println(" " + error.getMessage());
             }
             System.out.println(divider);
+        }
+    }
+
+    /**
+     * Saves a changed task list while allowing the chatbot to continue if the
+     * file system is temporarily unavailable.
+     *
+     * @param storage task storage to update
+     * @param tasks current task list
+     */
+    private static void saveTasks(Storage storage, List<Task> tasks) {
+        try {
+            storage.save(tasks);
+        } catch (IOException error) {
+            System.out.println(" Hmm, I couldn't save the latest task changes.");
         }
     }
 
