@@ -120,7 +120,7 @@ public class Lumi {
 
     /**
      * Creates the task represented by an add command.
-     * Date and time details are deliberately retained as plain text.
+     * Deadline and event dates are parsed into {@code LocalDateTime} values.
      *
      * @param command command entered by the user
      * @param commandType type of task creation command
@@ -153,7 +153,7 @@ public class Lumi {
             if (by.isEmpty()) {
                 throw new LumiException("Hmm, the /by value cannot be empty.");
             }
-            return new Deadline(description, by);
+            return new Deadline(description, DateTimeParser.parseUserInput(by));
         }
 
         if (commandType == CommandType.EVENT) {
@@ -179,7 +179,8 @@ public class Lumi {
             if (to.isEmpty()) {
                 throw new LumiException("Hmm, the /to value cannot be empty.");
             }
-            return new Event(description, from, to);
+            return new Event(description, DateTimeParser.parseUserInput(from),
+                    DateTimeParser.parseUserInput(to));
         }
 
         throw new LumiException("Hmm, I don't recognize that task type.");

@@ -10,8 +10,8 @@ Aim: Verify that to-dos, deadlines, and events are added polymorphically and ret
 
 ```text
 todo borrow book
-deadline return book /by Sunday
-event project meeting /from Mon 2pm /to 4pm
+deadline return book /by 2019-10-15
+event project meeting /from 2019-10-16 1400 /to 2019-10-16 1600
 mark 1
 list
 unmark 1
@@ -27,11 +27,11 @@ bye
  Now you have 1 tasks in the list.
 ---
  Got it. I've added this task:
-   [D][ ] return book (by: Sunday)
+   [D][ ] return book (by: Oct 15 2019)
  Now you have 2 tasks in the list.
 ---
  Got it. I've added this task:
-   [E][ ] project meeting (from: Mon 2pm to: 4pm)
+   [E][ ] project meeting (from: Oct 16 2019, 2:00PM to: Oct 16 2019, 4:00PM)
  Now you have 3 tasks in the list.
 ---
  Nice! I've marked this task as done:
@@ -39,28 +39,32 @@ bye
 ---
  Here are the tasks in your list:
  1.[T][X] borrow book
- 2.[D][ ] return book (by: Sunday)
- 3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+ 2.[D][ ] return book (by: Oct 15 2019)
+ 3.[E][ ] project meeting (from: Oct 16 2019, 2:00PM to: Oct 16 2019, 4:00PM)
 ---
  OK, I've marked this task as not done yet:
    [T][ ] borrow book
 ---
  Here are the tasks in your list:
  1.[T][ ] borrow book
- 2.[D][ ] return book (by: Sunday)
- 3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+ 2.[D][ ] return book (by: Oct 15 2019)
+ 3.[E][ ] project meeting (from: Oct 16 2019, 2:00PM to: Oct 16 2019, 4:00PM)
 ---
  Bye for now! Keep shining, and I hope to see you again soon!
 ```
 
-## TC-02: Free-form deadline text
+## TC-02: Parsed deadline dates and times
 
-Aim: Verify that deadline date and time details are retained as plain strings without date parsing.
+Aim: Verify strict calendar validation, ISO and day/month/year inputs, friendly display formatting, state preservation after invalid dates, and canonical date-time storage.
 
 ### Inputs
 
 ```text
-deadline do homework /by no idea :-p
+deadline impossible date /by 2019-02-29
+deadline wrong separator /by 2019/10/15
+deadline invalid time /by 2019-10-15 2400
+deadline do homework /by 2019-10-15
+deadline return book /by 2/12/2019 1800
 list
 bye
 ```
@@ -68,14 +72,32 @@ bye
 ### Expected outputs
 
 ```text
+ Hmm, use a date like 2019-10-15 or 2/12/2019, optionally followed by a 24-hour time such as 1800.
+---
+ Hmm, use a date like 2019-10-15 or 2/12/2019, optionally followed by a 24-hour time such as 1800.
+---
+ Hmm, use a date like 2019-10-15 or 2/12/2019, optionally followed by a 24-hour time such as 1800.
+---
  Got it. I've added this task:
-   [D][ ] do homework (by: no idea :-p)
+   [D][ ] do homework (by: Oct 15 2019)
  Now you have 1 tasks in the list.
 ---
+ Got it. I've added this task:
+   [D][ ] return book (by: Dec 02 2019, 6:00PM)
+ Now you have 2 tasks in the list.
+---
  Here are the tasks in your list:
- 1.[D][ ] do homework (by: no idea :-p)
+ 1.[D][ ] do homework (by: Oct 15 2019)
+ 2.[D][ ] return book (by: Dec 02 2019, 6:00PM)
 ---
  Bye for now! Keep shining, and I hope to see you again soon!
+```
+
+### Expected data
+
+```text
+D | 0 | do homework | 2019-10-15T00:00:00
+D | 0 | return book | 2019-12-02T18:00:00
 ```
 
 ## TC-03: Invalid task creation commands preserve state
@@ -99,7 +121,9 @@ event project meeting /from Mon /today
 event /from Mon /to Tue
 event project meeting /from /to Tue
 event project meeting /from Mon /to
+deadline impossible date /by 2019-02-29
 todo valid task
+event bad event /from 2019-10-15 /to tomorrow
 list
 bye
 ```
@@ -135,9 +159,13 @@ bye
 ---
  Hmm, the /to value cannot be empty.
 ---
+ Hmm, use a date like 2019-10-15 or 2/12/2019, optionally followed by a 24-hour time such as 1800.
+---
  Got it. I've added this task:
    [T][ ] valid task
  Now you have 1 tasks in the list.
+---
+ Hmm, use a date like 2019-10-15 or 2/12/2019, optionally followed by a 24-hour time such as 1800.
 ---
  Here are the tasks in your list:
  1.[T][ ] valid task
@@ -153,8 +181,8 @@ Aim: Verify deleting a task returns the removed task, decreases the count, and s
 
 ```text
 todo read book
-deadline return book /by June 6th
-event project meeting /from Aug 6th 2pm /to 4pm
+deadline return book /by 2019-06-06
+event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600
 mark 1
 mark 2
 list
@@ -173,38 +201,38 @@ bye
  Now you have 1 tasks in the list.
 ---
  Got it. I've added this task:
-   [D][ ] return book (by: June 6th)
+   [D][ ] return book (by: Jun 06 2019)
  Now you have 2 tasks in the list.
 ---
  Got it. I've added this task:
-   [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+   [E][ ] project meeting (from: Aug 06 2019, 2:00PM to: Aug 06 2019, 4:00PM)
  Now you have 3 tasks in the list.
 ---
  Nice! I've marked this task as done:
    [T][X] read book
 ---
  Nice! I've marked this task as done:
-   [D][X] return book (by: June 6th)
+   [D][X] return book (by: Jun 06 2019)
 ---
  Here are the tasks in your list:
  1.[T][X] read book
- 2.[D][X] return book (by: June 6th)
- 3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+ 2.[D][X] return book (by: Jun 06 2019)
+ 3.[E][ ] project meeting (from: Aug 06 2019, 2:00PM to: Aug 06 2019, 4:00PM)
 ---
  Noted. I've removed this task:
-   [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+   [E][ ] project meeting (from: Aug 06 2019, 2:00PM to: Aug 06 2019, 4:00PM)
  Now you have 2 tasks in the list.
 ---
  Here are the tasks in your list:
  1.[T][X] read book
- 2.[D][X] return book (by: June 6th)
+ 2.[D][X] return book (by: Jun 06 2019)
 ---
  Noted. I've removed this task:
    [T][X] read book
  Now you have 1 tasks in the list.
 ---
  Here are the tasks in your list:
- 1.[D][X] return book (by: June 6th)
+ 1.[D][X] return book (by: Jun 06 2019)
 ---
  Bye for now! Keep shining, and I hope to see you again soon!
 ```
@@ -218,7 +246,7 @@ Aim: Verify empty-list, missing, non-numeric, and out-of-range delete commands a
 ```text
 delete 1
 todo keep this task
-deadline remove this task /by tomorrow
+deadline remove this task /by 2019-10-16
 delete
 delete first
 delete 0
@@ -242,7 +270,7 @@ bye
  Now you have 1 tasks in the list.
 ---
  Got it. I've added this task:
-   [D][ ] remove this task (by: tomorrow)
+   [D][ ] remove this task (by: Oct 16 2019)
  Now you have 2 tasks in the list.
 ---
  Hmm, tell me which task to delete. Try: delete <task number>
@@ -255,10 +283,10 @@ bye
 ---
  Here are the tasks in your list:
  1.[T][ ] keep this task
- 2.[D][ ] remove this task (by: tomorrow)
+ 2.[D][ ] remove this task (by: Oct 16 2019)
 ---
  Noted. I've removed this task:
-   [D][ ] remove this task (by: tomorrow)
+   [D][ ] remove this task (by: Oct 16 2019)
  Now you have 1 tasks in the list.
 ---
  Hmm, choose a task number from 1 to 1.
@@ -342,9 +370,9 @@ Aim: Verify valid saved tasks and statuses load at startup, a malformed line is 
 
 ```text
 T | 1 | read book
-D | 0 | return book | June 6th
+D | 0 | return book | 2019-06-06T00:00:00
 this line is corrupted
-E | 0 | project meeting | Aug 6th 2pm | 4pm
+E | 0 | project meeting | 2019-08-06T14:00:00 | 2019-08-06T16:00:00
 ```
 
 ### Inputs
@@ -364,17 +392,17 @@ bye
 ```text
  Here are the tasks in your list:
  1.[T][X] read book
- 2.[D][ ] return book (by: June 6th)
- 3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+ 2.[D][ ] return book (by: Jun 06 2019)
+ 3.[E][ ] project meeting (from: Aug 06 2019, 2:00PM to: Aug 06 2019, 4:00PM)
 ---
  OK, I've marked this task as not done yet:
    [T][ ] read book
 ---
  Nice! I've marked this task as done:
-   [D][X] return book (by: June 6th)
+   [D][X] return book (by: Jun 06 2019)
 ---
  Noted. I've removed this task:
-   [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+   [E][ ] project meeting (from: Aug 06 2019, 2:00PM to: Aug 06 2019, 4:00PM)
  Now you have 2 tasks in the list.
 ---
  Got it. I've added this task:
@@ -383,7 +411,7 @@ bye
 ---
  Here are the tasks in your list:
  1.[T][ ] read book
- 2.[D][X] return book (by: June 6th)
+ 2.[D][X] return book (by: Jun 06 2019)
  3.[T][ ] join sports club
 ---
  Bye for now! Keep shining, and I hope to see you again soon!
@@ -393,6 +421,6 @@ bye
 
 ```text
 T | 0 | read book
-D | 1 | return book | June 6th
+D | 1 | return book | 2019-06-06T00:00:00
 T | 0 | join sports club
 ```
