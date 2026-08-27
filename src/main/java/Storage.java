@@ -3,6 +3,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,11 +91,12 @@ public class Storage {
         }
         if (task instanceof Deadline deadline) {
             return String.join(" | ", "D", status, escape(task.getDescription()),
-                    escape(deadline.getBy()));
+                    escape(deadline.getBy().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
         }
         if (task instanceof Event event) {
             return String.join(" | ", "E", status, escape(task.getDescription()),
-                    escape(event.getFrom()), escape(event.getTo()));
+                    escape(event.getFrom().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)),
+                    escape(event.getTo().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
         }
         throw new IllegalArgumentException("Unsupported task type: " + task.getClass().getName());
     }
@@ -129,11 +133,12 @@ public class Storage {
             break;
         case "D":
             requireFieldCount(fields, 4);
-            task = new Deadline(description, requireText(fields.get(3)));
+            task = new Deadline(description, parseStoredDateTime(fields.get(3)));
             break;
         case "E":
             requireFieldCount(fields, 5);
-            task = new Event(description, requireText(fields.get(3)), requireText(fields.get(4)));
+            task = new Event(description, parseStoredDateTime(fields.get(3)),
+                    parseStoredDateTime(fields.get(4)));
             break;
         default:
             throw new IllegalArgumentException("Invalid task type");
@@ -213,6 +218,21 @@ public class Storage {
             throw new IllegalArgumentException("Required task text is empty");
         }
         return value;
+    }
+
+    /**
+     * Parses the canonical ISO date-time format used in saved task records.
+     *
+     * @param value stored date-time field
+     * @return parsed date and time
+     * @throws IllegalArgumentException if the field is empty or invalid
+     */
+    private LocalDateTime parseStoredDateTime(String value) {
+        try {
+            return LocalDateTime.parse(requireText(value), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        } catch (DateTimeParseException error) {
+            throw new IllegalArgumentException("Invalid stored date and time", error);
+        }
     }
 
     /**
