@@ -1,3 +1,5 @@
+package lumi.storage;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -8,6 +10,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+
+import lumi.task.Deadline;
+import lumi.task.Event;
+import lumi.task.Task;
+import lumi.task.Todo;
 
 /**
  * Loads and saves Lumi tasks in a readable, pipe-delimited text file.

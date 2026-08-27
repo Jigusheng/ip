@@ -1,7 +1,16 @@
+package lumi;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import lumi.command.CommandType;
+import lumi.exception.LumiException;
+import lumi.parser.Parser;
+import lumi.storage.Storage;
+import lumi.task.Task;
+import lumi.ui.Ui;
 
 /**
  * Starts the Lumi chatbot application.

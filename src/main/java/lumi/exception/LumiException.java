@@ -1,3 +1,5 @@
+package lumi.exception;
+
 /**
  * Represents an input error that Lumi can explain to the user and recover from.
  */

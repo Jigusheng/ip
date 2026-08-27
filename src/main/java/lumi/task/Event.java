@@ -1,4 +1,8 @@
+package lumi.task;
+
 import java.time.LocalDateTime;
+
+import lumi.datetime.DateTimeParser;
 
 /**
  * Represents a task that occurs between a start and an end date or time.

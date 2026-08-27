@@ -1,3 +1,5 @@
+package lumi.command;
+
 /**
  * Represents the fixed set of commands understood by Lumi.
  */

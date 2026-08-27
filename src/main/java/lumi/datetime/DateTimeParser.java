@@ -1,3 +1,5 @@
+package lumi.datetime;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -6,6 +8,8 @@ import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.List;
 import java.util.Locale;
+
+import lumi.exception.LumiException;
 
 /**
  * Parses user-entered dates strictly and formats stored dates for display.

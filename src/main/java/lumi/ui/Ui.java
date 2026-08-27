@@ -1,5 +1,9 @@
+package lumi.ui;
+
 import java.util.List;
 import java.util.Scanner;
+
+import lumi.task.Task;
 
 /**
  * Handles all console input and output for Lumi.
