@@ -21,8 +21,10 @@ class UiTestCase:
 
     name: str
     aim: str
+    initial_data: str | None
     commands: list[str]
     expected_responses: list[str]
+    expected_data: str | None
 
 
 def normalize_output(text: str) -> str:
@@ -42,6 +44,13 @@ def fenced_block(section: str, heading: str, case_name: str) -> str:
     if not match:
         raise ValueError(f"{case_name}: missing '{heading}' text block")
     return match.group(1)
+
+
+def optional_fenced_block(section: str, heading: str) -> str | None:
+    """Return an optional text-fenced block beneath a level-three heading."""
+    pattern = rf"^### {re.escape(heading)}\s*\n+```text\s*\n(.*?)\n```"
+    match = re.search(pattern, section, flags=re.MULTILINE | re.DOTALL)
+    return match.group(1) if match else None
 
 
 def load_test_cases(plan_path: Path) -> list[UiTestCase]:
@@ -76,7 +85,14 @@ def load_test_cases(plan_path: Path) -> list[UiTestCase]:
                 f"{len(expected_responses)} expected response blocks"
             )
 
-        cases.append(UiTestCase(name, aim_match.group(1), commands, expected_responses))
+        cases.append(UiTestCase(
+            name,
+            aim_match.group(1),
+            optional_fenced_block(section, "Initial data"),
+            commands,
+            expected_responses,
+            optional_fenced_block(section, "Expected data"),
+        ))
 
     return cases
 
@@ -178,11 +194,16 @@ def print_transcript(
         print(DIVIDER)
 
 
-def run_case(case: UiTestCase, project_root: Path, class_dir: Path) -> bool:
+def run_case(case: UiTestCase, working_dir: Path, class_dir: Path) -> bool:
     """Run one fresh Lumi process and stop at its first output mismatch."""
+    data_file = working_dir / "data" / "lumi.txt"
+    if case.initial_data is not None:
+        data_file.parent.mkdir(parents=True)
+        data_file.write_text(case.initial_data + "\n", encoding="utf-8")
+
     result = subprocess.run(
         ["java", "-cp", str(class_dir), "Lumi"],
-        cwd=project_root,
+        cwd=working_dir,
         input="\n".join(case.commands) + "\n",
         capture_output=True,
         text=True,
@@ -216,7 +237,27 @@ def run_case(case: UiTestCase, project_root: Path, class_dir: Path) -> bool:
             print(actual or "<empty>")
             return False
 
+    if case.expected_data is not None:
+        if not data_file.is_file():
+            print_transcript(case, startup, actual_responses)
+            print(f"FAIL: {case.name}: expected {data_file} to be created")
+            return False
+
+        actual_data = normalize_output(data_file.read_text(encoding="utf-8"))
+        expected_data = normalize_output(case.expected_data)
+        if actual_data != expected_data:
+            print_transcript(case, startup, actual_responses)
+            print(f"FAIL: {case.name}: saved data did not match")
+            print("Expected data:")
+            print(expected_data or "<empty>")
+            print("Actual data:")
+            print(actual_data or "<empty>")
+            return False
+
     print_transcript(case, startup, actual_responses)
+    if case.expected_data is not None:
+        print("Saved data:")
+        print(normalize_output(data_file.read_text(encoding="utf-8")) or "<empty>")
     print(f"PASS: {case.name}")
     return True
 
@@ -230,14 +271,19 @@ def main() -> int:
         check_java_25()
 
         class_dir = project_root / "build" / f"lumi-ui-tests-{uuid.uuid4().hex}"
+        test_root = project_root / "build" / f"lumi-ui-data-{uuid.uuid4().hex}"
         class_dir.mkdir(parents=True)
+        test_root.mkdir(parents=True)
         try:
             compile_application(project_root, class_dir)
-            for test_case in test_cases:
-                if not run_case(test_case, project_root, class_dir):
+            for index, test_case in enumerate(test_cases, start=1):
+                case_directory = test_root / f"case-{index}"
+                case_directory.mkdir()
+                if not run_case(test_case, case_directory, class_dir):
                     return 1
         finally:
             shutil.rmtree(class_dir)
+            shutil.rmtree(test_root)
     except (OSError, RuntimeError, ValueError) as error:
         print(f"UI test setup failed: {error}", file=sys.stderr)
         return 1
