@@ -39,24 +39,17 @@ public enum CommandType {
     }
 
     /**
-     * Determines the command type represented by a complete line of user input.
+     * Reports whether a complete input line represents this command type.
      *
      * @param input complete user input
-     * @return the matching command type, or {@link #UNKNOWN} if none matches
+     * @return true if this command type matches the input
      */
-    public static CommandType from(String input) {
-        for (CommandType commandType : values()) {
-            if (commandType.keyword == null) {
-                continue;
-            }
-
-            boolean isExactMatch = input.equals(commandType.keyword);
-            boolean hasArgument = commandType.acceptsArgument
-                    && input.startsWith(commandType.keyword + " ");
-            if (isExactMatch || hasArgument) {
-                return commandType;
-            }
+    public boolean matches(String input) {
+        if (keyword == null) {
+            return false;
         }
-        return UNKNOWN;
+        boolean isExactMatch = input.equals(keyword);
+        boolean hasArgument = acceptsArgument && input.startsWith(keyword + " ");
+        return isExactMatch || hasArgument;
     }
 }
