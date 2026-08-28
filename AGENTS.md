@@ -10,7 +10,7 @@ Unless the user says otherwise, assume that you are assisting a student working 
 
 * Prior knowledge: Basic Java and OOP concepts.
 * Level of programming experience: Intermediate (Written 1000-5000 LoC)
-* IDE and level of expertise: IntelliJ and intermediate
+* IDE and level of expertise: IntelliJ and intermediate.
 
 # Guidance for interacting with users
 
