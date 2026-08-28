@@ -43,9 +43,9 @@ public final class DateTimeParser {
      * Parses a date with an optional 24-hour time. A date without a time is
      * represented as midnight at the start of that date.
      *
-     * @param value user-entered date and optional time
-     * @return parsed date and time
-     * @throws LumiException if the value has an unsupported format or invalid date
+     * @param value User-entered date and optional time.
+     * @return Parsed date and time.
+     * @throws LumiException If the value has an unsupported format or invalid date.
      */
     public static LocalDateTime parseUserInput(String value) throws LumiException {
         for (DateTimeFormatter formatter : DATE_TIME_INPUT_FORMATTERS) {
@@ -71,8 +71,8 @@ public final class DateTimeParser {
     /**
      * Formats a date for display, omitting the time when it is midnight.
      *
-     * @param dateTime date and time to format
-     * @return friendly date or date-time text
+     * @param dateTime Date and time to format.
+     * @return Friendly date or date-time text.
      */
     public static String format(LocalDateTime dateTime) {
         if (dateTime.toLocalTime().equals(LocalTime.MIDNIGHT)) {

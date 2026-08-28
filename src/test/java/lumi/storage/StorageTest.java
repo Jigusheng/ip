@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class StorageTest {
     /** Isolates each storage test from the project and from other test cases. */
     @TempDir
-    public Path temporaryDirectory;
+    Path temporaryDirectory;
 
     @Test
     public void load_missingFile_emptyResultReturned() throws Exception {

@@ -14,8 +14,8 @@ public class Deadline extends Task {
     /**
      * Creates an incomplete deadline task.
      *
-     * @param description description of the task
-     * @param by date or time by which the task must be completed
+     * @param description Description of the task.
+     * @param by Date or time by which the task must be completed.
      */
     public Deadline(String description, LocalDateTime by) {
         super(description);
@@ -25,7 +25,7 @@ public class Deadline extends Task {
     /**
      * Returns the deadline's due-date details for storage and other non-UI uses.
      *
-     * @return the date or time by which the task must be completed
+     * @return The date or time by which the task must be completed.
      */
     public LocalDateTime getBy() {
         return by;
@@ -34,7 +34,7 @@ public class Deadline extends Task {
     /**
      * Returns the deadline in the format used when displaying task lists.
      *
-     * @return the task type, status, description, and deadline
+     * @return The task type, status, description, and deadline.
      */
     @Override
     public String toString() {

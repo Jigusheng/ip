@@ -4,14 +4,31 @@ package lumi.command;
  * Represents the fixed set of commands understood by Lumi.
  */
 public enum CommandType {
+    /** Adds a task without a date or time. */
     TODO("todo", true),
+
+    /** Adds a task that must be completed by a specific date or time. */
     DEADLINE("deadline", true),
+
+    /** Adds a task that occurs between a start and end date or time. */
     EVENT("event", true),
+
+    /** Displays all stored tasks. */
     LIST("list", false),
+
+    /** Marks a stored task as complete. */
     MARK("mark", true),
+
+    /** Marks a stored task as incomplete. */
     UNMARK("unmark", true),
+
+    /** Removes a stored task. */
     DELETE("delete", true),
+
+    /** Ends the application. */
     BYE("bye", false),
+
+    /** Represents input that does not match a supported command. */
     UNKNOWN(null, false);
 
     /** The word used to enter this command, or null for an unknown command. */
@@ -23,8 +40,8 @@ public enum CommandType {
     /**
      * Creates a command type with its user-facing keyword.
      *
-     * @param keyword word used to enter the command
-     * @param acceptsArgument whether text is allowed after the command keyword
+     * @param keyword Word used to enter the command.
+     * @param acceptsArgument Whether text is allowed after the command keyword.
      */
     CommandType(String keyword, boolean acceptsArgument) {
         this.keyword = keyword;
@@ -34,7 +51,7 @@ public enum CommandType {
     /**
      * Returns the word used to enter this command.
      *
-     * @return the command keyword, or null for {@link #UNKNOWN}
+     * @return The command keyword, or null for {@link #UNKNOWN}.
      */
     public String getKeyword() {
         return keyword;
@@ -43,8 +60,8 @@ public enum CommandType {
     /**
      * Reports whether a complete input line represents this command type.
      *
-     * @param input complete user input
-     * @return true if this command type matches the input
+     * @param input Complete user input.
+     * @return True if this command type matches the input.
      */
     public boolean matches(String input) {
         if (keyword == null) {

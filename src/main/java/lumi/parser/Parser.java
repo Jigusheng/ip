@@ -21,9 +21,9 @@ public final class Parser {
     /**
      * Identifies the command represented by a complete input line.
      *
-     * @param input complete user input
-     * @return matching command type
-     * @throws LumiException if the input is empty or does not match a command
+     * @param input Complete user input.
+     * @return Matching command type.
+     * @throws LumiException If the input is empty or does not match a command.
      */
     public static CommandType parseCommandType(String input) throws LumiException {
         if (input.isEmpty()) {
@@ -43,10 +43,10 @@ public final class Parser {
      * Creates the task represented by an add command.
      * Deadline and event dates are parsed into {@code LocalDateTime} values.
      *
-     * @param command complete command entered by the user
-     * @param commandType type of task creation command
-     * @return a to-do, deadline, or event based on the command type
-     * @throws LumiException if required task details are missing or invalid
+     * @param command Complete command entered by the user.
+     * @param commandType Type of task creation command.
+     * @return A to-do, deadline, or event based on the command type.
+     * @throws LumiException If required task details are missing or invalid.
      */
     public static Task parseTask(String command, CommandType commandType) throws LumiException {
         if (commandType == CommandType.TODO) {
@@ -110,11 +110,11 @@ public final class Parser {
     /**
      * Converts a task command's user-facing number to a list index.
      *
-     * @param command complete command entered by the user
-     * @param commandType type of task command, such as mark, unmark, or delete
-     * @param taskCount number of tasks currently stored
-     * @return the zero-based index of the selected task
-     * @throws LumiException if the number is missing, invalid, or out of range
+     * @param command Complete command entered by the user.
+     * @param commandType Type of task command, such as mark, unmark, or delete.
+     * @param taskCount Number of tasks currently stored.
+     * @return The zero-based index of the selected task.
+     * @throws LumiException If the number is missing, invalid, or out of range.
      */
     public static int parseTaskIndex(String command, CommandType commandType, int taskCount)
             throws LumiException {
@@ -144,10 +144,10 @@ public final class Parser {
     /**
      * Finds a slash-prefixed separator only when it appears as a complete token.
      *
-     * @param text text containing task details
-     * @param separator separator to find, such as {@code /by}
-     * @param startIndex index from which to begin searching
-     * @return the separator index, or -1 if no complete separator token exists
+     * @param text Text containing task details.
+     * @param separator Separator to find, such as {@code /by}.
+     * @param startIndex Index from which to begin searching.
+     * @return The separator index, or -1 if no complete separator token exists.
      */
     private static int findSeparator(String text, String separator, int startIndex) {
         int position = text.indexOf(separator, startIndex);

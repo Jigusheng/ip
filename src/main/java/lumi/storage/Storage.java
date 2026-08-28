@@ -28,7 +28,7 @@ public class Storage {
     /**
      * Creates storage backed by the given file.
      *
-     * @param dataFile path of the task data file
+     * @param dataFile Path of the task data file.
      */
     public Storage(Path dataFile) {
         this.dataFile = dataFile;
@@ -38,8 +38,8 @@ public class Storage {
      * Loads all valid tasks from disk. A missing file represents an empty task
      * list, while malformed non-empty lines are counted and skipped.
      *
-     * @return the valid tasks and number of malformed lines skipped
-     * @throws IOException if the existing file cannot be read
+     * @return The valid tasks and number of malformed lines skipped.
+     * @throws IOException If the existing file cannot be read.
      */
     public LoadResult load() throws IOException {
         if (Files.notExists(dataFile)) {
@@ -67,8 +67,8 @@ public class Storage {
      * Rewriting the complete list keeps the file synchronized after additions,
      * status changes, and deletions.
      *
-     * @param tasks current task list
-     * @throws IOException if the directory or data file cannot be written
+     * @param tasks Current task list.
+     * @throws IOException If the directory or data file cannot be written.
      */
     public void save(List<Task> tasks) throws IOException {
         Path parentDirectory = dataFile.getParent();
@@ -88,8 +88,8 @@ public class Storage {
     /**
      * Converts one task to its disk representation.
      *
-     * @param task task to serialize
-     * @return pipe-delimited task record
+     * @param task Task to serialize.
+     * @return Pipe-delimited task record.
      */
     private String formatTask(Task task) {
         String status = task.isDone() ? "1" : "0";
@@ -112,9 +112,9 @@ public class Storage {
      * Parses one task record and rejects invalid types, statuses, field counts,
      * empty required fields, and malformed escape sequences.
      *
-     * @param line one non-empty line from the data file
-     * @return task represented by the line
-     * @throws IllegalArgumentException if the line is malformed
+     * @param line One non-empty line from the data file.
+     * @return Task represented by the line.
+     * @throws IllegalArgumentException If the line is malformed.
      */
     private Task parseTask(String line) {
         List<String> fields = splitFields(line);
@@ -134,21 +134,21 @@ public class Storage {
         String description = requireText(fields.get(2));
         Task task;
         switch (fields.get(0)) {
-        case "T":
-            requireFieldCount(fields, 3);
-            task = new Todo(description);
-            break;
-        case "D":
-            requireFieldCount(fields, 4);
-            task = new Deadline(description, parseStoredDateTime(fields.get(3)));
-            break;
-        case "E":
-            requireFieldCount(fields, 5);
-            task = new Event(description, parseStoredDateTime(fields.get(3)),
-                    parseStoredDateTime(fields.get(4)));
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid task type");
+            case "T":
+                requireFieldCount(fields, 3);
+                task = new Todo(description);
+                break;
+            case "D":
+                requireFieldCount(fields, 4);
+                task = new Deadline(description, parseStoredDateTime(fields.get(3)));
+                break;
+            case "E":
+                requireFieldCount(fields, 5);
+                task = new Event(description, parseStoredDateTime(fields.get(3)),
+                        parseStoredDateTime(fields.get(4)));
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid task type");
         }
 
         if (isDone) {
@@ -160,8 +160,8 @@ public class Storage {
     /**
      * Escapes characters that have structural meaning in the storage format.
      *
-     * @param value task text to escape
-     * @return safely encoded field text
+     * @param value Task text to escape.
+     * @return Safely encoded field text.
      */
     private String escape(String value) {
         return value.replace("\\", "\\\\")
@@ -173,9 +173,9 @@ public class Storage {
     /**
      * Splits a record at unescaped pipe characters and decodes escaped text.
      *
-     * @param line task record to split
-     * @return decoded fields with surrounding format spaces removed
-     * @throws IllegalArgumentException if an escape sequence is incomplete or unknown
+     * @param line Task record to split.
+     * @return Decoded fields with surrounding format spaces removed.
+     * @throws IllegalArgumentException If an escape sequence is incomplete or unknown.
      */
     private List<String> splitFields(String line) {
         ArrayList<String> fields = new ArrayList<>();
@@ -230,9 +230,9 @@ public class Storage {
     /**
      * Parses the canonical ISO date-time format used in saved task records.
      *
-     * @param value stored date-time field
-     * @return parsed date and time
-     * @throws IllegalArgumentException if the field is empty or invalid
+     * @param value Stored date-time field.
+     * @return Parsed date and time.
+     * @throws IllegalArgumentException If the field is empty or invalid.
      */
     private LocalDateTime parseStoredDateTime(String value) {
         try {
@@ -245,8 +245,8 @@ public class Storage {
     /**
      * Contains the successfully loaded tasks and corruption information.
      *
-     * @param tasks valid tasks loaded from the data file
-     * @param skippedLineCount number of malformed non-empty lines skipped
+     * @param tasks Valid tasks loaded from the data file.
+     * @param skippedLineCount Number of malformed non-empty lines skipped.
      */
     public record LoadResult(List<Task> tasks, int skippedLineCount) {
     }

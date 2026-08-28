@@ -15,14 +15,18 @@ import lumi.ui.Ui;
 /**
  * Starts the Lumi chatbot application.
  */
-public class Lumi {
+public final class Lumi {
     /** Portable path to the task data file, relative to the project root. */
     private static final Path DATA_FILE = Path.of("data", "lumi.txt");
+
+    /** Prevents creation of this application entry-point class. */
+    private Lumi() {
+    }
 
     /**
      * Runs the chatbot and processes user input until the user enters {@code bye}.
      *
-     * @param args command-line arguments; not used by this application
+     * @param args Command-line arguments; not used by this application.
      */
     public static void main(String[] args) {
         Ui ui = new Ui();
@@ -87,8 +91,9 @@ public class Lumi {
      * Saves a changed task list while allowing the chatbot to continue if the
      * file system is temporarily unavailable.
      *
-     * @param storage task storage to update
-     * @param tasks current task list
+     * @param storage Task storage to update.
+     * @param tasks Current task list.
+     * @param ui Console UI used to report saving errors.
      */
     private static void saveTasks(Storage storage, List<Task> tasks, Ui ui) {
         try {

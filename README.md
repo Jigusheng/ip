@@ -33,7 +33,7 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
 
 ## Building the fat JAR
 
-The Shadow plugin packages Lumi and all of its runtime dependencies into one executable file named `duke.jar`. Ensure that `java -version` reports Java 25 before building or running it.
+The Shadow plugin packages Lumi and all of its runtime dependencies into one executable file named `lumi.jar`. Ensure that `java -version` reports Java 25 before building or running it.
 
 From the project root, run the following command on Windows:
 
@@ -47,18 +47,18 @@ On macOS or Linux, run:
 ./gradlew shadowJar
 ```
 
-The completed JAR is created at `build/libs/duke.jar`. The normal Gradle `build` task also creates this JAR because the Shadow task is connected to the build lifecycle.
+The completed JAR is created at `build/libs/lumi.jar`. The normal Gradle `build` task also creates this JAR because the Shadow task is connected to the build lifecycle.
 
 To run Lumi from the project root on Windows:
 
 ```powershell
-java -jar build\libs\duke.jar
+java -jar build\libs\lumi.jar
 ```
 
 On macOS or Linux:
 
 ```shell
-java -jar build/libs/duke.jar
+java -jar build/libs/lumi.jar
 ```
 
 Lumi stores tasks in `data/lumi.txt` relative to the directory from which the command is run. Running the command from the project root therefore keeps the data file in the project's `data` folder.

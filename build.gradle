@@ -49,7 +49,7 @@ jar {
 
 tasks.named('shadowJar') {
     // Keep a stable filename so users do not need to look up a versioned JAR name.
-    archiveFileName = 'duke.jar'
+    archiveFileName = 'lumi.jar'
 
     // Make the fat JAR directly executable with `java -jar`.
     manifest {

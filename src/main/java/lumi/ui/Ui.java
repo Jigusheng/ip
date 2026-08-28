@@ -42,7 +42,7 @@ public class Ui {
     /**
      * Reports whether another command is available.
      *
-     * @return true when another input line can be read
+     * @return true when another input line can be read.
      */
     public boolean hasNextCommand() {
         return scanner.hasNextLine();
@@ -51,7 +51,7 @@ public class Ui {
     /**
      * Reads and trims the next user command.
      *
-     * @return the next command, without surrounding whitespace
+     * @return the next command, without surrounding whitespace.
      */
     public String readCommand() {
         return scanner.nextLine().trim();
@@ -70,7 +70,7 @@ public class Ui {
     /**
      * Shows all tasks with their one-based list numbers.
      *
-     * @param tasks tasks to display
+     * @param tasks Tasks to display.
      */
     public void showTaskList(List<Task> tasks) {
         System.out.println(" Here are the tasks in your list:");
@@ -79,38 +79,64 @@ public class Ui {
         }
     }
 
-    /** Shows confirmation that a task was marked as complete. */
+    /**
+     * Shows confirmation that a task was marked as complete.
+     *
+     * @param task Task that was marked as complete.
+     */
     public void showMarked(Task task) {
         System.out.println(" Nice! I've marked this task as done:");
         System.out.println("   " + task);
     }
 
-    /** Shows confirmation that a task was marked as incomplete. */
+    /**
+     * Shows confirmation that a task was marked as incomplete.
+     *
+     * @param task Task that was marked as incomplete.
+     */
     public void showUnmarked(Task task) {
         System.out.println(" OK, I've marked this task as not done yet:");
         System.out.println("   " + task);
     }
 
-    /** Shows the removed task and updated task count. */
+    /**
+     * Shows the removed task and updated task count.
+     *
+     * @param task Task that was removed.
+     * @param taskCount Number of remaining tasks.
+     */
     public void showDeleted(Task task, int taskCount) {
         System.out.println(" Noted. I've removed this task:");
         System.out.println("   " + task);
         showTaskCount(taskCount);
     }
 
-    /** Shows the added task and updated task count. */
+    /**
+     * Shows the added task and updated task count.
+     *
+     * @param task Task that was added.
+     * @param taskCount Number of stored tasks.
+     */
     public void showAdded(Task task, int taskCount) {
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + task);
         showTaskCount(taskCount);
     }
 
-    /** Shows an input or command error in Lumi's response format. */
+    /**
+     * Shows an input or command error in Lumi's response format.
+     *
+     * @param message User-friendly error explanation.
+     */
     public void showError(String message) {
         System.out.println(" " + message);
     }
 
-    /** Shows a warning when malformed saved records were skipped. */
+    /**
+     * Shows a warning when malformed saved records were skipped.
+     *
+     * @param skippedLineCount Number of malformed records skipped.
+     */
     public void showSkippedFileLines(int skippedLineCount) {
         System.out.println("I found " + skippedLineCount
                 + " invalid line(s) in the saved task file and skipped them.");

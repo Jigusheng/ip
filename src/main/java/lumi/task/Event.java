@@ -17,9 +17,9 @@ public class Event extends Task {
     /**
      * Creates an incomplete event task.
      *
-     * @param description description of the event
-     * @param from date or time at which the event starts
-     * @param to date or time at which the event ends
+     * @param description Description of the event.
+     * @param from Date or time at which the event starts.
+     * @param to Date or time at which the event ends.
      */
     public Event(String description, LocalDateTime from, LocalDateTime to) {
         super(description);
@@ -30,7 +30,7 @@ public class Event extends Task {
     /**
      * Returns the event's start details for storage and other non-UI uses.
      *
-     * @return the date or time at which the event starts
+     * @return The date or time at which the event starts.
      */
     public LocalDateTime getFrom() {
         return from;
@@ -39,7 +39,7 @@ public class Event extends Task {
     /**
      * Returns the event's end details for storage and other non-UI uses.
      *
-     * @return the date or time at which the event ends
+     * @return The date or time at which the event ends.
      */
     public LocalDateTime getTo() {
         return to;
@@ -48,7 +48,7 @@ public class Event extends Task {
     /**
      * Returns the event in the format used when displaying task lists.
      *
-     * @return the task type, status, description, start, and end
+     * @return The task type, status, description, start, and end.
      */
     @Override
     public String toString() {
