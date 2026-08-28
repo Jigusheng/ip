@@ -74,9 +74,17 @@ public class Ui {
      */
     public void showTaskList(List<Task> tasks) {
         System.out.println(" Here are the tasks in your list:");
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println(" " + (i + 1) + "." + tasks.get(i));
-        }
+        showNumberedTasks(tasks);
+    }
+
+    /**
+     * Shows tasks whose descriptions match a find keyword.
+     *
+     * @param matchingTasks Matching tasks to display.
+     */
+    public void showMatchingTasks(List<Task> matchingTasks) {
+        System.out.println(" Here are the matching tasks in your list:");
+        showNumberedTasks(matchingTasks);
     }
 
     /**
@@ -155,5 +163,12 @@ public class Ui {
     /** Shows the task count after an addition or deletion. */
     private void showTaskCount(int taskCount) {
         System.out.println(" Now you have " + taskCount + " tasks in the list.");
+    }
+
+    /** Shows tasks with one-based numbers in their displayed order. */
+    private void showNumberedTasks(List<Task> tasks) {
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println(" " + (i + 1) + "." + tasks.get(i));
+        }
     }
 }

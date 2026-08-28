@@ -36,7 +36,7 @@ public final class Parser {
             }
         }
         throw new LumiException("Hmm, I don't recognize that command. "
-                + "Try todo, deadline, event, list, mark, unmark, delete, or bye.");
+                + "Try todo, deadline, event, list, find, mark, unmark, delete, or bye.");
     }
 
     /**
@@ -105,6 +105,21 @@ public final class Parser {
         }
 
         throw new LumiException("Hmm, I don't recognize that task type.");
+    }
+
+    /**
+     * Extracts the keyword from a find command.
+     *
+     * @param command Complete find command entered by the user.
+     * @return Non-empty keyword to search for.
+     * @throws LumiException If the keyword is missing.
+     */
+    public static String parseFindKeyword(String command) throws LumiException {
+        String keyword = command.substring(CommandType.FIND.getKeyword().length()).trim();
+        if (keyword.isEmpty()) {
+            throw new LumiException("Hmm, tell me what to find. Try: find <keyword>");
+        }
+        return keyword;
     }
 
     /**

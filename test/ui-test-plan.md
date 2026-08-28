@@ -135,11 +135,11 @@ bye
 ---
  Hmm, a todo needs a description. Try: todo <description>
 ---
- Hmm, I don't recognize that command. Try todo, deadline, event, list, mark, unmark, delete, or bye.
+ Hmm, I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, or bye.
 ---
- Hmm, I don't recognize that command. Try todo, deadline, event, list, mark, unmark, delete, or bye.
+ Hmm, I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, or bye.
 ---
- Hmm, I don't recognize that command. Try todo, deadline, event, list, mark, unmark, delete, or bye.
+ Hmm, I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, or bye.
 ---
  Hmm, a deadline needs a due date. Try: deadline <description> /by <when>
 ---
@@ -423,4 +423,77 @@ bye
 T | 0 | read book
 D | 1 | return book | 2019-06-06T00:00:00
 T | 0 | join sports club
+```
+
+## TC-08: Find tasks by description
+
+Aim: Verify that find requires a separate non-empty keyword, matches description substrings case-insensitively across task types, renumbers matches, shows no results cleanly, and does not change task state.
+
+### Inputs
+
+```text
+find
+findbook
+todo read book
+deadline return BOOK /by 2019-06-06
+event book club /from 2019-08-06 1400 /to 2019-08-06 1600
+todo write notes
+mark 1
+mark 2
+find bOoK
+find CLUB
+find 2019
+find missing
+list
+bye
+```
+
+### Expected outputs
+
+```text
+ Hmm, tell me what to find. Try: find <keyword>
+---
+ Hmm, I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, or bye.
+---
+ Got it. I've added this task:
+   [T][ ] read book
+ Now you have 1 tasks in the list.
+---
+ Got it. I've added this task:
+   [D][ ] return BOOK (by: Jun 06 2019)
+ Now you have 2 tasks in the list.
+---
+ Got it. I've added this task:
+   [E][ ] book club (from: Aug 06 2019, 2:00PM to: Aug 06 2019, 4:00PM)
+ Now you have 3 tasks in the list.
+---
+ Got it. I've added this task:
+   [T][ ] write notes
+ Now you have 4 tasks in the list.
+---
+ Nice! I've marked this task as done:
+   [T][X] read book
+---
+ Nice! I've marked this task as done:
+   [D][X] return BOOK (by: Jun 06 2019)
+---
+ Here are the matching tasks in your list:
+ 1.[T][X] read book
+ 2.[D][X] return BOOK (by: Jun 06 2019)
+ 3.[E][ ] book club (from: Aug 06 2019, 2:00PM to: Aug 06 2019, 4:00PM)
+---
+ Here are the matching tasks in your list:
+ 1.[E][ ] book club (from: Aug 06 2019, 2:00PM to: Aug 06 2019, 4:00PM)
+---
+ Here are the matching tasks in your list:
+---
+ Here are the matching tasks in your list:
+---
+ Here are the tasks in your list:
+ 1.[T][X] read book
+ 2.[D][X] return BOOK (by: Jun 06 2019)
+ 3.[E][ ] book club (from: Aug 06 2019, 2:00PM to: Aug 06 2019, 4:00PM)
+ 4.[T][ ] write notes
+---
+ Bye for now! Keep shining, and I hope to see you again soon!
 ```

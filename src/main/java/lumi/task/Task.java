@@ -1,5 +1,7 @@
 package lumi.task;
 
+import java.util.Locale;
+
 /**
  * Represents a task and whether it has been completed.
  */
@@ -45,6 +47,18 @@ public class Task {
      */
     public boolean isDone() {
         return isDone;
+    }
+
+    /**
+     * Reports whether the task description contains a keyword, ignoring case.
+     *
+     * @param keyword Non-empty keyword to search for.
+     * @return True if the description contains the keyword.
+     */
+    public boolean hasDescriptionContaining(String keyword) {
+        String normalizedDescription = description.toLowerCase(Locale.ROOT);
+        String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
+        return normalizedDescription.contains(normalizedKeyword);
     }
 
     /** Marks this task as completed. */
