@@ -56,6 +56,12 @@ public final class Lumi {
 
                 if (commandType == CommandType.LIST) {
                     ui.showTaskList(tasks);
+                } else if (commandType == CommandType.FIND) {
+                    String keyword = Parser.parseFindKeyword(command);
+                    List<Task> matchingTasks = tasks.stream()
+                            .filter(task -> task.hasDescriptionContaining(keyword))
+                            .toList();
+                    ui.showMatchingTasks(matchingTasks);
                 } else if (commandType == CommandType.MARK) {
                     int taskIndex = Parser.parseTaskIndex(command, commandType, tasks.size());
                     tasks.get(taskIndex).markAsDone();

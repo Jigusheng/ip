@@ -30,6 +30,7 @@ public class ParserTest {
                 () -> assertEquals(CommandType.DEADLINE, Parser.parseCommandType("deadline")),
                 () -> assertEquals(CommandType.EVENT, Parser.parseCommandType("event")),
                 () -> assertEquals(CommandType.LIST, Parser.parseCommandType("list")),
+                () -> assertEquals(CommandType.FIND, Parser.parseCommandType("find")),
                 () -> assertEquals(CommandType.MARK, Parser.parseCommandType("mark")),
                 () -> assertEquals(CommandType.UNMARK, Parser.parseCommandType("unmark")),
                 () -> assertEquals(CommandType.DELETE, Parser.parseCommandType("delete")),
@@ -47,6 +48,7 @@ public class ParserTest {
                         Parser.parseCommandType("deadline return book /by 2019-10-15")),
                 () -> assertEquals(CommandType.EVENT,
                         Parser.parseCommandType("event meeting /from Monday /to Tuesday")),
+                () -> assertEquals(CommandType.FIND, Parser.parseCommandType("find book")),
                 () -> assertEquals(CommandType.MARK, Parser.parseCommandType("mark 1")),
                 () -> assertEquals(CommandType.UNMARK, Parser.parseCommandType("unmark 1")),
                 () -> assertEquals(CommandType.DELETE, Parser.parseCommandType("delete 1"))
@@ -62,7 +64,7 @@ public class ParserTest {
     @Test
     public void parseCommandType_unknownPartialOrExtraInput_exceptionThrown() {
         String expectedMessage = "Hmm, I don't recognize that command. "
-                + "Try todo, deadline, event, list, mark, unmark, delete, or bye.";
+                + "Try todo, deadline, event, list, find, mark, unmark, delete, or bye.";
 
         assertAll(
                 () -> assertLumiExceptionMessage(expectedMessage,
@@ -70,11 +72,31 @@ public class ParserTest {
                 () -> assertLumiExceptionMessage(expectedMessage,
                         () -> Parser.parseCommandType("todos")),
                 () -> assertLumiExceptionMessage(expectedMessage,
+                        () -> Parser.parseCommandType("findbook")),
+                () -> assertLumiExceptionMessage(expectedMessage,
                         () -> Parser.parseCommandType("list later")),
                 () -> assertLumiExceptionMessage(expectedMessage,
                         () -> Parser.parseCommandType("bye now")),
                 () -> assertLumiExceptionMessage(expectedMessage,
                         () -> Parser.parseCommandType(" todo"))
+        );
+    }
+
+    @Test
+    public void parseFindKeyword_validMultiWordKeyword_trimmedKeywordReturned()
+            throws LumiException {
+        assertEquals("return book", Parser.parseFindKeyword("find   return book   "));
+    }
+
+    @Test
+    public void parseFindKeyword_missingKeyword_exceptionThrown() {
+        assertAll(
+                () -> assertLumiExceptionMessage(
+                        "Hmm, tell me what to find. Try: find <keyword>",
+                        () -> Parser.parseFindKeyword("find")),
+                () -> assertLumiExceptionMessage(
+                        "Hmm, tell me what to find. Try: find <keyword>",
+                        () -> Parser.parseFindKeyword("find   "))
         );
     }
 
