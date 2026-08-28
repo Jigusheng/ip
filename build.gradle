@@ -47,8 +47,19 @@ jar {
     archiveClassifier = 'without-dependencies'
 }
 
-shadowJar {
+tasks.named('shadowJar') {
+    // Keep a stable filename so users do not need to look up a versioned JAR name.
     archiveFileName = 'duke.jar'
+
+    // Make the fat JAR directly executable with `java -jar`.
+    manifest {
+        attributes 'Main-Class': application.mainClass.get()
+    }
+}
+
+tasks.named('assemble') {
+    // A normal Gradle build should include the distributable fat JAR.
+    dependsOn tasks.named('shadowJar')
 }
 
 run {
