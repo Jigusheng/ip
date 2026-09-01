@@ -1,5 +1,10 @@
 package lumi.storage;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,12 +19,6 @@ import lumi.task.Event;
 import lumi.task.Task;
 import lumi.task.Todo;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /** Tests loading and saving Lumi's pipe-delimited task records. */
 public class StorageTest {
     /** Isolates each storage test from the project and from other test cases. */
@@ -32,10 +31,8 @@ public class StorageTest {
 
         Storage.LoadResult result = storage.load();
 
-        assertAll(
-                () -> assertTrue(result.tasks().isEmpty()),
-                () -> assertEquals(0, result.skippedLineCount())
-        );
+        assertTrue(result.tasks().isEmpty());
+        assertEquals(0, result.skippedLineCount());
     }
 
     @Test
@@ -52,18 +49,16 @@ public class StorageTest {
         Todo todo = assertInstanceOf(Todo.class, result.tasks().get(0));
         Deadline deadline = assertInstanceOf(Deadline.class, result.tasks().get(1));
         Event event = assertInstanceOf(Event.class, result.tasks().get(2));
-        assertAll(
-                () -> assertEquals(0, result.skippedLineCount()),
-                () -> assertEquals("read book", todo.getDescription()),
-                () -> assertTrue(todo.isDone()),
-                () -> assertEquals("return book", deadline.getDescription()),
-                () -> assertFalse(deadline.isDone()),
-                () -> assertEquals(LocalDateTime.of(2019, 6, 6, 0, 0), deadline.getBy()),
-                () -> assertEquals("project meeting", event.getDescription()),
-                () -> assertTrue(event.isDone()),
-                () -> assertEquals(LocalDateTime.of(2019, 8, 6, 14, 0), event.getFrom()),
-                () -> assertEquals(LocalDateTime.of(2019, 8, 6, 16, 0), event.getTo())
-        );
+        assertEquals(0, result.skippedLineCount());
+        assertEquals("read book", todo.getDescription());
+        assertTrue(todo.isDone());
+        assertEquals("return book", deadline.getDescription());
+        assertFalse(deadline.isDone());
+        assertEquals(LocalDateTime.of(2019, 6, 6, 0, 0), deadline.getBy());
+        assertEquals("project meeting", event.getDescription());
+        assertTrue(event.isDone());
+        assertEquals(LocalDateTime.of(2019, 8, 6, 14, 0), event.getFrom());
+        assertEquals(LocalDateTime.of(2019, 8, 6, 16, 0), event.getTo());
     }
 
     @Test
@@ -87,11 +82,9 @@ public class StorageTest {
 
         Storage.LoadResult result = new Storage(dataFile).load();
 
-        assertAll(
-                () -> assertEquals(1, result.tasks().size()),
-                () -> assertEquals("valid task", result.tasks().get(0).getDescription()),
-                () -> assertEquals(10, result.skippedLineCount())
-        );
+        assertEquals(1, result.tasks().size());
+        assertEquals("valid task", result.tasks().get(0).getDescription());
+        assertEquals(10, result.skippedLineCount());
     }
 
     @Test
@@ -126,11 +119,9 @@ public class StorageTest {
         Storage.LoadResult result = storage.load();
 
         Todo restored = assertInstanceOf(Todo.class, result.tasks().get(0));
-        assertAll(
-                () -> assertEquals(0, result.skippedLineCount()),
-                () -> assertEquals(description, restored.getDescription()),
-                () -> assertTrue(restored.isDone())
-        );
+        assertEquals(0, result.skippedLineCount());
+        assertEquals(description, restored.getDescription());
+        assertTrue(restored.isDone());
     }
 
     @Test
