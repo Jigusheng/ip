@@ -1,11 +1,10 @@
 package lumi.task;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 /** Tests task status changes, rendering, and description matching. */
 public class TaskTest {
@@ -13,12 +12,10 @@ public class TaskTest {
     public void hasDescriptionContaining_exactPartialAndMixedCaseKeywords_trueReturned() {
         Task task = new Task("Read Book Reviews");
 
-        assertAll(
-                () -> assertTrue(task.hasDescriptionContaining("Read Book Reviews")),
-                () -> assertTrue(task.hasDescriptionContaining("Book")),
-                () -> assertTrue(task.hasDescriptionContaining("book reviews")),
-                () -> assertTrue(task.hasDescriptionContaining("READ"))
-        );
+        assertTrue(task.hasDescriptionContaining("Read Book Reviews"));
+        assertTrue(task.hasDescriptionContaining("Book"));
+        assertTrue(task.hasDescriptionContaining("book reviews"));
+        assertTrue(task.hasDescriptionContaining("READ"));
     }
 
     @Test
@@ -32,24 +29,18 @@ public class TaskTest {
     public void markAndUnmarkTask_statusAndDisplayUpdated() {
         Task task = new Task("read book");
 
-        assertAll(
-                () -> assertFalse(task.isDone()),
-                () -> assertEquals(" ", task.getStatusIcon()),
-                () -> assertEquals("[ ] read book", task.toString())
-        );
+        assertFalse(task.isDone());
+        assertEquals(" ", task.getStatusIcon());
+        assertEquals("[ ] read book", task.toString());
 
         task.markAsDone();
-        assertAll(
-                () -> assertTrue(task.isDone()),
-                () -> assertEquals("X", task.getStatusIcon()),
-                () -> assertEquals("[X] read book", task.toString())
-        );
+        assertTrue(task.isDone());
+        assertEquals("X", task.getStatusIcon());
+        assertEquals("[X] read book", task.toString());
 
         task.markAsNotDone();
-        assertAll(
-                () -> assertFalse(task.isDone()),
-                () -> assertEquals(" ", task.getStatusIcon()),
-                () -> assertEquals("[ ] read book", task.toString())
-        );
+        assertFalse(task.isDone());
+        assertEquals(" ", task.getStatusIcon());
+        assertEquals("[ ] read book", task.toString());
     }
 }

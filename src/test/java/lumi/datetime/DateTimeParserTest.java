@@ -1,5 +1,8 @@
 package lumi.datetime;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -7,27 +10,21 @@ import org.junit.jupiter.api.Test;
 
 import lumi.exception.LumiException;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 /** Tests strict user date parsing and friendly date-time formatting. */
 public class DateTimeParserTest {
     @Test
     public void parseUserInput_supportedDateFormats_correctDateTimesReturned()
             throws LumiException {
-        assertAll(
-                () -> assertEquals(LocalDateTime.of(2019, 10, 15, 0, 0),
-                        DateTimeParser.parseUserInput("2019-10-15")),
-                () -> assertEquals(LocalDateTime.of(2019, 12, 2, 0, 0),
-                        DateTimeParser.parseUserInput("2/12/2019")),
-                () -> assertEquals(LocalDateTime.of(2019, 10, 15, 18, 0),
-                        DateTimeParser.parseUserInput("2019-10-15 1800")),
-                () -> assertEquals(LocalDateTime.of(2019, 12, 2, 9, 5),
-                        DateTimeParser.parseUserInput("2/12/2019 0905")),
-                () -> assertEquals(LocalDateTime.of(2020, 2, 29, 23, 59),
-                        DateTimeParser.parseUserInput("2020-02-29 2359"))
-        );
+        assertEquals(LocalDateTime.of(2019, 10, 15, 0, 0),
+                DateTimeParser.parseUserInput("2019-10-15"));
+        assertEquals(LocalDateTime.of(2019, 12, 2, 0, 0),
+                DateTimeParser.parseUserInput("2/12/2019"));
+        assertEquals(LocalDateTime.of(2019, 10, 15, 18, 0),
+                DateTimeParser.parseUserInput("2019-10-15 1800"));
+        assertEquals(LocalDateTime.of(2019, 12, 2, 9, 5),
+                DateTimeParser.parseUserInput("2/12/2019 0905"));
+        assertEquals(LocalDateTime.of(2020, 2, 29, 23, 59),
+                DateTimeParser.parseUserInput("2020-02-29 2359"));
     }
 
     @Test
@@ -48,8 +45,8 @@ public class DateTimeParserTest {
         );
 
         for (String value : invalidValues) {
-            LumiException exception = assertThrows(LumiException.class,
-                    () -> DateTimeParser.parseUserInput(value), "Value: " + value);
+            LumiException exception = assertThrows(LumiException.class, () ->
+                    DateTimeParser.parseUserInput(value), "Value: " + value);
             assertEquals(
                     "Hmm, use a date like 2019-10-15 or 2/12/2019, "
                             + "optionally followed by a 24-hour time such as 1800.",
@@ -65,13 +62,11 @@ public class DateTimeParserTest {
 
     @Test
     public void format_nonMidnightTimes_twelveHourTimeIncluded() {
-        assertAll(
-                () -> assertEquals("Jan 05 2026, 9:07AM",
-                        DateTimeParser.format(LocalDateTime.of(2026, 1, 5, 9, 7))),
-                () -> assertEquals("Jan 05 2026, 12:00PM",
-                        DateTimeParser.format(LocalDateTime.of(2026, 1, 5, 12, 0))),
-                () -> assertEquals("Jan 05 2026, 11:59PM",
-                        DateTimeParser.format(LocalDateTime.of(2026, 1, 5, 23, 59)))
-        );
+        assertEquals("Jan 05 2026, 9:07AM",
+                DateTimeParser.format(LocalDateTime.of(2026, 1, 5, 9, 7)));
+        assertEquals("Jan 05 2026, 12:00PM",
+                DateTimeParser.format(LocalDateTime.of(2026, 1, 5, 12, 0)));
+        assertEquals("Jan 05 2026, 11:59PM",
+                DateTimeParser.format(LocalDateTime.of(2026, 1, 5, 23, 59)));
     }
 }

@@ -64,3 +64,22 @@ java -jar build/libs/lumi.jar
 Lumi stores tasks in `data/lumi.txt` relative to the directory from which the command is run. Running the command from the project root therefore keeps the data file in the project's `data` folder.
 
 In IntelliJ, you can build the same JAR by opening the Gradle tool window, finding the `shadowJar` task, and running it. Refresh the project view afterward if the `build` folder is not immediately visible.
+
+## Checking code style
+
+The project uses Checkstyle 11.0.0 with the SE-EDU Java coding-standard rules. Run both the production-code and
+test-code checks from the project root:
+
+On Windows:
+
+```powershell
+.\gradlew.bat checkstyleMain checkstyleTest
+```
+
+On macOS or Linux:
+
+```shell
+./gradlew checkstyleMain checkstyleTest
+```
+
+The normal Gradle `check` and `build` tasks also run these Checkstyle checks.
