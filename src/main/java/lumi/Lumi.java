@@ -13,14 +13,24 @@ import lumi.task.Task;
 import lumi.ui.Ui;
 
 /**
- * Starts the Lumi chatbot application.
+ * Runs the Lumi chatbot and generates replies for its graphical interface.
  */
 public final class Lumi {
     /** Portable path to the task data file, relative to the project root. */
     private static final Path DATA_FILE = Path.of("data", "lumi.txt");
 
-    /** Prevents creation of this application entry-point class. */
-    private Lumi() {
+    /** Creates a Lumi chatbot instance for use by the graphical interface. */
+    public Lumi() {
+    }
+
+    /**
+     * Generates a response for the user's chat message.
+     *
+     * @param input User's chat message.
+     * @return Lumi's response.
+     */
+    public String getResponse(String input) {
+        return "Lumi heard: " + input;
     }
 
     /**

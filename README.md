@@ -13,21 +13,10 @@ Prerequisites: JDK 25, update Intellij to the most recent version.
    1. If there are any further prompts, accept the defaults.
 1. Configure the project to use **JDK 25** (not other versions) as explained in [here](https://www.jetbrains.com/help/idea/sdk.html#set-up-jdk).<br>
    In the same dialog, set the **Project language level** field to the `SDK default` option.
-1. After that, locate the `src/main/java/lumi/Lumi.java` file, right-click it, and choose `Run Lumi.main()` (if the code editor is showing compile errors, try restarting the IDE). If the setup is correct, you should see something like the below as the output:
-   ```
-   o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o
-    _      _   _ __  __ ___ 
-   | |    | | | |  \/  |_ _|
-   | |    | | | | |\/| || | 
-   | |___ | |_| | |  | || | 
-   |_____| \___/|_|  |_|___|
-   Hi there! I'm Lumi, your bright and bubbly chat buddy!
-   I'm popping in to sprinkle a little cheer your way.
-   o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o
-   That's all for now - thanks for stopping by!
-   Stay sparkly, and come chat again soon!
-   o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o
-   ```
+1. After that, locate the `src/main/java/lumi/Launcher.java` file, right-click it, and choose
+   `Run Launcher.main()` (if the code editor is showing compile errors, try restarting the IDE). If the setup is
+   correct, a JavaFX window titled `Lumi` should appear. Enter a message using the text field and either press Enter or
+   click Send to see the user message and Lumi's response.
 
 **Warning:** Keep `src/main/java` as the source root for all Java packages. Do not move the `lumi` package outside this folder, because build tools such as Gradle expect this standard layout.
 
@@ -61,7 +50,10 @@ On macOS or Linux:
 java -jar build/libs/lumi.jar
 ```
 
-Lumi stores tasks in `data/lumi.txt` relative to the directory from which the command is run. Running the command from the project root therefore keeps the data file in the project's `data` folder.
+The GUI includes the responsive layout and core CSS tweaks from JavaFX tutorial Part 5. Its FXML views are in
+`src/main/resources/view`, while the linked stylesheets are in `src/main/resources/css`. Lumi echoes each message
+through the tutorial's initial response hook; the full task-command integration remains available through the console
+entry point and can be connected to the GUI in a later step.
 
 In IntelliJ, you can build the same JAR by opening the Gradle tool window, finding the `shadowJar` task, and running it. Refresh the project view afterward if the `build` folder is not immediately visible.
 
