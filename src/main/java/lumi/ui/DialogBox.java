@@ -36,7 +36,7 @@ public class DialogBox extends HBox {
             fxmlLoader.setRoot(this);
             fxmlLoader.load();
         } catch (IOException error) {
-            error.printStackTrace();
+            throw new IllegalStateException("Unable to load the dialog box layout.", error);
         }
 
         assert dialog != null : "DialogBox.fxml must inject dialog";

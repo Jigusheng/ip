@@ -122,39 +122,43 @@ public class Storage {
             throw new IllegalArgumentException("A task record needs at least three fields");
         }
 
-        boolean isDone;
-        if (fields.get(1).equals("1")) {
-            isDone = true;
-        } else if (fields.get(1).equals("0")) {
-            isDone = false;
-        } else {
-            throw new IllegalArgumentException("Invalid task status");
-        }
-
+        boolean isDone = parseDoneStatus(fields.get(1));
         String description = requireText(fields.get(2));
-        Task task;
-        switch (fields.get(0)) {
-            case "T":
-                requireFieldCount(fields, 3);
-                task = new Todo(description);
-                break;
-            case "D":
-                requireFieldCount(fields, 4);
-                task = new Deadline(description, parseStoredDateTime(fields.get(3)));
-                break;
-            case "E":
-                requireFieldCount(fields, 5);
-                task = new Event(description, parseStoredDateTime(fields.get(3)),
-                        parseStoredDateTime(fields.get(4)));
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid task type");
-        }
-
+        Task task = createTask(fields, description);
         if (isDone) {
             task.markAsDone();
         }
         return task;
+    }
+
+    /** Converts a stored status field into its boolean representation. */
+    private boolean parseDoneStatus(String status) {
+        switch (status) {
+            case "1":
+                return true;
+            case "0":
+                return false;
+            default:
+                throw new IllegalArgumentException("Invalid task status");
+        }
+    }
+
+    /** Creates the task represented by validated record fields. */
+    private Task createTask(List<String> fields, String description) {
+        switch (fields.get(0)) {
+            case "T":
+                requireFieldCount(fields, 3);
+                return new Todo(description);
+            case "D":
+                requireFieldCount(fields, 4);
+                return new Deadline(description, parseStoredDateTime(fields.get(3)));
+            case "E":
+                requireFieldCount(fields, 5);
+                return new Event(description, parseStoredDateTime(fields.get(3)),
+                        parseStoredDateTime(fields.get(4)));
+            default:
+                throw new IllegalArgumentException("Invalid task type");
+        }
     }
 
     /**
@@ -185,23 +189,21 @@ public class Storage {
         for (int i = 0; i < line.length(); i++) {
             char character = line.charAt(i);
             if (isEscaped) {
-                if (character == '\\' || character == '|') {
-                    field.append(character);
-                } else if (character == 'n') {
-                    field.append('\n');
-                } else if (character == 'r') {
-                    field.append('\r');
-                } else {
-                    throw new IllegalArgumentException("Unknown escape sequence");
-                }
+                appendEscapedCharacter(field, character);
                 isEscaped = false;
-            } else if (character == '\\') {
-                isEscaped = true;
-            } else if (character == '|') {
-                fields.add(field.toString().trim());
-                field.setLength(0);
-            } else {
-                field.append(character);
+                continue;
+            }
+
+            switch (character) {
+                case '\\':
+                    isEscaped = true;
+                    break;
+                case '|':
+                    fields.add(field.toString().trim());
+                    field.setLength(0);
+                    break;
+                default:
+                    field.append(character);
             }
         }
 
@@ -210,6 +212,24 @@ public class Storage {
         }
         fields.add(field.toString().trim());
         return fields;
+    }
+
+    /** Appends the character represented by a supported escape sequence. */
+    private void appendEscapedCharacter(StringBuilder field, char character) {
+        switch (character) {
+            case '\\':
+            case '|':
+                field.append(character);
+                break;
+            case 'n':
+                field.append('\n');
+                break;
+            case 'r':
+                field.append('\r');
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown escape sequence");
+        }
     }
 
     /** Ensures a parsed task record has exactly the required number of fields. */

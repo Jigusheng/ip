@@ -9,10 +9,10 @@ import lumi.datetime.DateTimeParser;
  */
 public class Event extends Task {
     /** The date or time at which the event starts. */
-    protected LocalDateTime from;
+    private final LocalDateTime from;
 
     /** The date or time at which the event ends. */
-    protected LocalDateTime to;
+    private final LocalDateTime to;
 
     /**
      * Creates an incomplete event task.

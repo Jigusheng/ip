@@ -14,6 +14,15 @@ import lumi.task.Todo;
  * already-validated values instead of processing strings themselves.
  */
 public final class Parser {
+    /** Separates a deadline description from its due date. */
+    private static final String DEADLINE_SEPARATOR = "/by";
+
+    /** Separates an event description from its start date. */
+    private static final String EVENT_START_SEPARATOR = "/from";
+
+    /** Separates an event start date from its end date. */
+    private static final String EVENT_END_SEPARATOR = "/to";
+
     /** Prevents creation of this stateless utility class. */
     private Parser() {
     }
@@ -51,62 +60,80 @@ public final class Parser {
      * @throws LumiException If required task details are missing or invalid.
      */
     public static Task parseTask(String command, CommandType commandType) throws LumiException {
-        if (commandType == CommandType.TODO) {
-            String description = command.substring(commandType.getKeyword().length()).trim();
-            if (description.isEmpty()) {
-                throw new LumiException("Hmm, a todo needs a description. "
-                        + "Try: todo <description>");
-            }
-            return new Todo(description);
+        switch (commandType) {
+            case TODO:
+                return parseTodo(extractCommandDetails(command, commandType));
+            case DEADLINE:
+                return parseDeadline(extractCommandDetails(command, commandType));
+            case EVENT:
+                return parseEvent(extractCommandDetails(command, commandType));
+            default:
+                throw new LumiException("Hmm, I don't recognize that task type.");
+        }
+    }
+
+    /** Extracts the text following a recognized command keyword. */
+    private static String extractCommandDetails(String command, CommandType commandType) {
+        return command.substring(commandType.getKeyword().length()).trim();
+    }
+
+    /** Creates a to-do after validating its description. */
+    private static Todo parseTodo(String description) throws LumiException {
+        if (description.isEmpty()) {
+            throw new LumiException("Hmm, a todo needs a description. "
+                    + "Try: todo <description>");
+        }
+        return new Todo(description);
+    }
+
+    /** Creates a deadline after validating its description and due date. */
+    private static Deadline parseDeadline(String details) throws LumiException {
+        int separatorPosition = findSeparator(details, DEADLINE_SEPARATOR, 0);
+        if (separatorPosition < 0) {
+            throw new LumiException("Hmm, a deadline needs a due date. "
+                    + "Try: deadline <description> /by <when>");
         }
 
-        if (commandType == CommandType.DEADLINE) {
-            String details = command.substring(commandType.getKeyword().length()).trim();
-            int byPosition = findSeparator(details, "/by", 0);
-            if (byPosition < 0) {
-                throw new LumiException("Hmm, a deadline needs a due date. "
-                        + "Try: deadline <description> /by <when>");
-            }
+        String description = details.substring(0, separatorPosition).trim();
+        String dueDateText = details.substring(
+                separatorPosition + DEADLINE_SEPARATOR.length()).trim();
+        if (description.isEmpty()) {
+            throw new LumiException("Hmm, a deadline needs a description before /by.");
+        }
+        if (dueDateText.isEmpty()) {
+            throw new LumiException("Hmm, the /by value cannot be empty.");
+        }
+        return new Deadline(description, DateTimeParser.parseUserInput(dueDateText));
+    }
 
-            String description = details.substring(0, byPosition).trim();
-            String by = details.substring(byPosition + "/by".length()).trim();
-            if (description.isEmpty()) {
-                throw new LumiException("Hmm, a deadline needs a description before /by.");
-            }
-            if (by.isEmpty()) {
-                throw new LumiException("Hmm, the /by value cannot be empty.");
-            }
-            return new Deadline(description, DateTimeParser.parseUserInput(by));
+    /** Creates an event after validating its description and date range. */
+    private static Event parseEvent(String details) throws LumiException {
+        int startSeparatorPosition = findSeparator(details, EVENT_START_SEPARATOR, 0);
+        int endSeparatorPosition = startSeparatorPosition < 0
+                ? -1
+                : findSeparator(details, EVENT_END_SEPARATOR,
+                        startSeparatorPosition + EVENT_START_SEPARATOR.length());
+        if (startSeparatorPosition < 0 || endSeparatorPosition < 0) {
+            throw new LumiException("Hmm, an event needs start and end details. "
+                    + "Try: event <description> /from <start> /to <end>");
         }
 
-        if (commandType == CommandType.EVENT) {
-            String details = command.substring(commandType.getKeyword().length()).trim();
-            int fromPosition = findSeparator(details, "/from", 0);
-            int toPosition = fromPosition < 0
-                    ? -1
-                    : findSeparator(details, "/to", fromPosition + "/from".length());
-            if (fromPosition < 0 || toPosition < 0) {
-                throw new LumiException("Hmm, an event needs start and end details. "
-                        + "Try: event <description> /from <start> /to <end>");
-            }
-
-            String description = details.substring(0, fromPosition).trim();
-            String from = details.substring(fromPosition + "/from".length(), toPosition).trim();
-            String to = details.substring(toPosition + "/to".length()).trim();
-            if (description.isEmpty()) {
-                throw new LumiException("Hmm, an event needs a description before /from.");
-            }
-            if (from.isEmpty()) {
-                throw new LumiException("Hmm, the /from value cannot be empty.");
-            }
-            if (to.isEmpty()) {
-                throw new LumiException("Hmm, the /to value cannot be empty.");
-            }
-            return new Event(description, DateTimeParser.parseUserInput(from),
-                    DateTimeParser.parseUserInput(to));
+        String description = details.substring(0, startSeparatorPosition).trim();
+        String startDateText = details.substring(
+                startSeparatorPosition + EVENT_START_SEPARATOR.length(), endSeparatorPosition).trim();
+        String endDateText = details.substring(
+                endSeparatorPosition + EVENT_END_SEPARATOR.length()).trim();
+        if (description.isEmpty()) {
+            throw new LumiException("Hmm, an event needs a description before /from.");
         }
-
-        throw new LumiException("Hmm, I don't recognize that task type.");
+        if (startDateText.isEmpty()) {
+            throw new LumiException("Hmm, the /from value cannot be empty.");
+        }
+        if (endDateText.isEmpty()) {
+            throw new LumiException("Hmm, the /to value cannot be empty.");
+        }
+        return new Event(description, DateTimeParser.parseUserInput(startDateText),
+                DateTimeParser.parseUserInput(endDateText));
     }
 
     /**
