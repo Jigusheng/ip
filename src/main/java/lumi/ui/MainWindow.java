@@ -30,6 +30,10 @@ public class MainWindow extends AnchorPane {
     /** Binds the scroll position to the height of the dialog container. */
     @FXML
     public void initialize() {
+        assert scrollPane != null : "MainWindow.fxml must inject scrollPane";
+        assert dialogContainer != null : "MainWindow.fxml must inject dialogContainer";
+        assert userInput != null : "MainWindow.fxml must inject userInput";
+        assert sendButton != null : "MainWindow.fxml must inject sendButton";
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
     }
 
@@ -39,7 +43,12 @@ public class MainWindow extends AnchorPane {
      * @param lumi Lumi chatbot instance.
      */
     public void setLumi(Lumi lumi) {
+        assert lumi != null : "MainWindow requires a Lumi command engine";
         this.lumi = lumi;
+        if (!lumi.getStartupMessage().isEmpty()) {
+            dialogContainer.getChildren().add(
+                    DialogBox.getLumiDialog(lumi.getStartupMessage(), lumiImage));
+        }
     }
 
     /**
@@ -47,6 +56,7 @@ public class MainWindow extends AnchorPane {
      */
     @FXML
     private void handleUserInput() {
+        assert lumi != null : "Lumi must be set before the window accepts input";
         String input = userInput.getText();
         String response = lumi.getResponse(input);
         dialogContainer.getChildren().addAll(
@@ -54,5 +64,9 @@ public class MainWindow extends AnchorPane {
                 DialogBox.getLumiDialog(response, lumiImage)
         );
         userInput.clear();
+        if (!lumi.isRunning()) {
+            userInput.setDisable(true);
+            sendButton.setDisable(true);
+        }
     }
 }

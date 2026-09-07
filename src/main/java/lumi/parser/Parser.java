@@ -41,6 +41,8 @@ public final class Parser {
 
         for (CommandType commandType : CommandType.values()) {
             if (commandType.matches(input)) {
+                assert commandType != CommandType.UNKNOWN
+                        : "UNKNOWN must never match a command keyword";
                 return commandType;
             }
         }
@@ -180,6 +182,8 @@ public final class Parser {
         if (taskNumber < 1 || taskNumber > taskCount) {
             throw new LumiException("Hmm, choose a task number from 1 to " + taskCount + ".");
         }
+        assert taskNumber >= 1 && taskNumber <= taskCount
+                : "Validated task numbers must be within the current task list";
         return taskNumber - 1;
     }
 

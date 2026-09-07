@@ -209,7 +209,7 @@ def run_case(case: UiTestCase, working_dir: Path, class_dir: Path) -> bool:
         data_file.write_text(case.initial_data + "\n", encoding="utf-8")
 
     result = subprocess.run(
-        ["java", "-cp", str(class_dir), "lumi.Lumi"],
+        ["java", "-ea", "-cp", str(class_dir), "lumi.Lumi"],
         cwd=working_dir,
         input="\n".join(case.commands) + "\n",
         capture_output=True,
