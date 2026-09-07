@@ -121,9 +121,16 @@ def check_java_25() -> None:
 
 
 def compile_application(project_root: Path, output_dir: Path) -> None:
-    """Compile all project Java source files into a temporary directory."""
+    """Compile the console application's Java sources into a temporary directory."""
     source_dir = project_root / "src" / "main" / "java"
-    sources = sorted(source_dir.rglob("*.java"))
+    javafx_sources = {
+        source_dir / "lumi" / "Launcher.java",
+        source_dir / "lumi" / "Main.java",
+        source_dir / "lumi" / "ui" / "DialogBox.java",
+        source_dir / "lumi" / "ui" / "MainWindow.java",
+    }
+    sources = sorted(source for source in source_dir.rglob("*.java")
+                     if source not in javafx_sources)
     if not sources:
         raise RuntimeError(f"No Java sources found in {source_dir}")
 
@@ -202,7 +209,7 @@ def run_case(case: UiTestCase, working_dir: Path, class_dir: Path) -> bool:
         data_file.write_text(case.initial_data + "\n", encoding="utf-8")
 
     result = subprocess.run(
-        ["java", "-cp", str(class_dir), "lumi.Lumi"],
+        ["java", "-ea", "-cp", str(class_dir), "lumi.Lumi"],
         cwd=working_dir,
         input="\n".join(case.commands) + "\n",
         capture_output=True,
