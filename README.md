@@ -51,9 +51,9 @@ java -jar build/libs/lumi.jar
 ```
 
 The GUI includes the responsive layout and core CSS tweaks from JavaFX tutorial Part 5. Its FXML views are in
-`src/main/resources/view`, while the linked stylesheets are in `src/main/resources/css`. Lumi echoes each message
-through the tutorial's initial response hook; the full task-command integration remains available through the console
-entry point and can be connected to the GUI in a later step.
+`src/main/resources/view`, while the linked stylesheets are in `src/main/resources/css`. The GUI and console share the
+same task list, saved data, and command handling. Both interfaces support `todo`, `deadline`, `event`, `list`, `find`,
+`mark`, `unmark`, `delete`, and `bye`.
 
 In IntelliJ, you can build the same JAR by opening the Gradle tool window, finding the `shadowJar` task, and running it. Refresh the project view afterward if the `build` folder is not immediately visible.
 

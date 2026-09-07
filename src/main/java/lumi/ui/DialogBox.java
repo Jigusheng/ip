@@ -39,6 +39,8 @@ public class DialogBox extends HBox {
             error.printStackTrace();
         }
 
+        assert dialog != null : "DialogBox.fxml must inject dialog";
+        assert displayPicture != null : "DialogBox.fxml must inject displayPicture";
         dialog.setText(message);
         displayPicture.setImage(image);
     }

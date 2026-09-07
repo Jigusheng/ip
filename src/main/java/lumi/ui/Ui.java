@@ -62,6 +62,15 @@ public class Ui {
         System.out.println(DIVIDER);
     }
 
+    /**
+     * Shows a complete response produced by Lumi's shared command engine.
+     *
+     * @param response Response to display.
+     */
+    public void showResponse(String response) {
+        System.out.println(response);
+    }
+
     /** Shows the farewell message. */
     public void showGoodbye() {
         System.out.println(" Bye for now! Keep shining, and I hope to see you again soon!");

@@ -19,18 +19,133 @@ public final class Lumi {
     /** Portable path to the task data file, relative to the project root. */
     private static final Path DATA_FILE = Path.of("data", "lumi.txt");
 
-    /** Creates a Lumi chatbot instance for use by the graphical interface. */
+    /** Farewell returned when the user ends the current Lumi session. */
+    private static final String GOODBYE_MESSAGE =
+            " Bye for now! Keep shining, and I hope to see you again soon!";
+
+    /** Storage used to load and save the current task list. */
+    private final Storage storage;
+
+    /** Tasks available to both the console and graphical interfaces. */
+    private final ArrayList<Task> tasks = new ArrayList<>();
+
+    /** Warning to show after startup when some stored data could not be loaded. */
+    private final String startupMessage;
+
+    /** Whether this Lumi session is still accepting commands. */
+    private boolean isRunning = true;
+
+    /** Creates a Lumi chatbot backed by the default task data file. */
     public Lumi() {
+        this(DATA_FILE);
     }
 
     /**
-     * Generates a response for the user's chat message.
+     * Creates a Lumi chatbot backed by a particular task data file.
+     * This overload lets tests use isolated files without changing user data.
      *
-     * @param input User's chat message.
-     * @return Lumi's response.
+     * @param dataFile Path of the task data file.
+     */
+    Lumi(Path dataFile) {
+        storage = new Storage(dataFile);
+        String loadMessage = "";
+        try {
+            Storage.LoadResult loadResult = storage.load();
+            assert loadResult.tasks() != null : "Storage must return a task list";
+            assert loadResult.skippedLineCount() >= 0
+                    : "Storage cannot report a negative number of skipped lines";
+            tasks.addAll(loadResult.tasks());
+            if (loadResult.skippedLineCount() > 0) {
+                loadMessage = "I found " + loadResult.skippedLineCount()
+                        + " invalid line(s) in the saved task file and skipped them.";
+            }
+        } catch (IOException error) {
+            loadMessage = "I couldn't load saved tasks, so I'm starting with an empty list.";
+        }
+        startupMessage = loadMessage;
+    }
+
+    /**
+     * Returns any warning produced while loading saved tasks.
+     *
+     * @return A loading warning, or an empty string when loading succeeded.
+     */
+    public String getStartupMessage() {
+        return startupMessage;
+    }
+
+    /**
+     * Reports whether the chatbot is still accepting commands.
+     *
+     * @return True until the user enters {@code bye}.
+     */
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    /**
+     * Executes a command entered through either interface and generates its response.
+     *
+     * @param input Complete command entered by the user.
+     * @return Lumi's response to the command.
      */
     public String getResponse(String input) {
-        return "Lumi heard: " + input;
+        String command = input == null ? "" : input.trim();
+        try {
+            CommandType commandType = Parser.parseCommandType(command);
+            if (commandType == CommandType.BYE) {
+                isRunning = false;
+                return GOODBYE_MESSAGE;
+            }
+
+            if (commandType == CommandType.LIST) {
+                return formatNumberedTasks("Here are the tasks in your list:", tasks);
+            }
+            if (commandType == CommandType.FIND) {
+                String keyword = Parser.parseFindKeyword(command);
+                List<Task> matchingTasks = tasks.stream()
+                        .filter(task -> task.hasDescriptionContaining(keyword))
+                        .toList();
+                return formatNumberedTasks("Here are the matching tasks in your list:", matchingTasks);
+            }
+            if (commandType == CommandType.MARK) {
+                int taskIndex = getTaskIndex(command, commandType);
+                Task task = tasks.get(taskIndex);
+                task.markAsDone();
+                return saveTasks(" Nice! I've marked this task as done:\n   " + task);
+            }
+            if (commandType == CommandType.UNMARK) {
+                int taskIndex = getTaskIndex(command, commandType);
+                Task task = tasks.get(taskIndex);
+                task.markAsNotDone();
+                return saveTasks(" OK, I've marked this task as not done yet:\n   " + task);
+            }
+            if (commandType == CommandType.DELETE) {
+                int taskIndex = getTaskIndex(command, commandType);
+                int previousTaskCount = tasks.size();
+                Task removedTask = tasks.remove(taskIndex);
+                assert tasks.size() == previousTaskCount - 1
+                        : "Deleting one task must reduce the task count by one";
+                String response = " Noted. I've removed this task:\n   " + removedTask
+                        + "\n Now you have " + tasks.size() + " tasks in the list.";
+                return saveTasks(response);
+            }
+            if (commandType == CommandType.TODO
+                    || commandType == CommandType.DEADLINE
+                    || commandType == CommandType.EVENT) {
+                Task newTask = Parser.parseTask(command, commandType);
+                int previousTaskCount = tasks.size();
+                tasks.add(newTask);
+                assert tasks.size() == previousTaskCount + 1
+                        : "Adding one task must increase the task count by one";
+                String response = " Got it. I've added this task:\n   " + newTask
+                        + "\n Now you have " + tasks.size() + " tasks in the list.";
+                return saveTasks(response);
+            }
+            throw new LumiException("Hmm, I don't recognize that command.");
+        } catch (LumiException error) {
+            return " " + error.getMessage();
+        }
     }
 
     /**
@@ -41,82 +156,65 @@ public final class Lumi {
     public static void main(String[] args) {
         Ui ui = new Ui();
         ui.showWelcome();
-        Storage storage = new Storage(DATA_FILE);
-        ArrayList<Task> tasks = new ArrayList<>();
-        try {
-            Storage.LoadResult loadResult = storage.load();
-            tasks.addAll(loadResult.tasks());
-            if (loadResult.skippedLineCount() > 0) {
-                ui.showSkippedFileLines(loadResult.skippedLineCount());
-            }
-        } catch (IOException error) {
-            ui.showLoadingError();
+        Lumi lumi = new Lumi();
+        if (!lumi.getStartupMessage().isEmpty()) {
+            ui.showResponse(lumi.getStartupMessage());
         }
         ui.showDivider();
 
-        while (ui.hasNextCommand()) {
+        while (lumi.isRunning() && ui.hasNextCommand()) {
             String command = ui.readCommand();
             ui.showDivider();
-            try {
-                CommandType commandType = Parser.parseCommandType(command);
-                if (commandType == CommandType.BYE) {
-                    ui.showGoodbye();
-                    break;
-                }
-
-                if (commandType == CommandType.LIST) {
-                    ui.showTaskList(tasks);
-                } else if (commandType == CommandType.FIND) {
-                    String keyword = Parser.parseFindKeyword(command);
-                    List<Task> matchingTasks = tasks.stream()
-                            .filter(task -> task.hasDescriptionContaining(keyword))
-                            .toList();
-                    ui.showMatchingTasks(matchingTasks);
-                } else if (commandType == CommandType.MARK) {
-                    int taskIndex = Parser.parseTaskIndex(command, commandType, tasks.size());
-                    tasks.get(taskIndex).markAsDone();
-                    ui.showMarked(tasks.get(taskIndex));
-                    saveTasks(storage, tasks, ui);
-                } else if (commandType == CommandType.UNMARK) {
-                    int taskIndex = Parser.parseTaskIndex(command, commandType, tasks.size());
-                    tasks.get(taskIndex).markAsNotDone();
-                    ui.showUnmarked(tasks.get(taskIndex));
-                    saveTasks(storage, tasks, ui);
-                } else if (commandType == CommandType.DELETE) {
-                    int taskIndex = Parser.parseTaskIndex(command, commandType, tasks.size());
-                    Task removedTask = tasks.remove(taskIndex);
-                    ui.showDeleted(removedTask, tasks.size());
-                    saveTasks(storage, tasks, ui);
-                } else if (commandType == CommandType.TODO
-                        || commandType == CommandType.DEADLINE
-                        || commandType == CommandType.EVENT) {
-                    Task newTask = Parser.parseTask(command, commandType);
-                    tasks.add(newTask);
-                    ui.showAdded(newTask, tasks.size());
-                    saveTasks(storage, tasks, ui);
-                }
-            } catch (LumiException error) {
-                ui.showError(error.getMessage());
-            } finally {
-                ui.showDivider();
-            }
+            ui.showResponse(lumi.getResponse(command));
+            ui.showDivider();
         }
     }
 
     /**
-     * Saves a changed task list while allowing the chatbot to continue if the
-     * file system is temporarily unavailable.
+     * Formats tasks with the one-based numbers shown in Lumi responses.
      *
-     * @param storage Task storage to update.
-     * @param tasks Current task list.
-     * @param ui Console UI used to report saving errors.
+     * @param heading Explanation shown above the tasks.
+     * @param tasksToDisplay Tasks to include in the response.
+     * @return Heading followed by the numbered tasks.
      */
-    private static void saveTasks(Storage storage, List<Task> tasks, Ui ui) {
-        try {
-            storage.save(tasks);
-        } catch (IOException error) {
-            ui.showSavingError();
+    private String formatNumberedTasks(String heading, List<Task> tasksToDisplay) {
+        assert heading != null && !heading.isBlank()
+                : "A numbered task response must have a heading";
+        assert tasksToDisplay != null : "A numbered task response must have a task list";
+        StringBuilder response = new StringBuilder(" ").append(heading);
+        for (int i = 0; i < tasksToDisplay.size(); i++) {
+            response.append("\n ").append(i + 1).append(".").append(tasksToDisplay.get(i));
         }
+        return response.toString();
     }
 
+    /**
+     * Parses a task number and verifies the parser's index postcondition.
+     *
+     * @param command Complete mark, unmark, or delete command.
+     * @param commandType Type of task command.
+     * @return A valid zero-based index into the current task list.
+     * @throws LumiException If the task number is missing, invalid, or out of range.
+     */
+    private int getTaskIndex(String command, CommandType commandType) throws LumiException {
+        int taskIndex = Parser.parseTaskIndex(command, commandType, tasks.size());
+        assert taskIndex >= 0 && taskIndex < tasks.size()
+                : "Parser must return an index within the current task list";
+        return taskIndex;
+    }
+
+    /**
+     * Saves the current tasks and appends a warning if saving fails.
+     *
+     * @param response Successful command response.
+     * @return The response, followed by a saving warning when needed.
+     */
+    private String saveTasks(String response) {
+        try {
+            storage.save(tasks);
+            return response;
+        } catch (IOException error) {
+            return response + "\n Hmm, I couldn't save the latest task changes.";
+        }
+    }
 }

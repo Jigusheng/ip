@@ -15,9 +15,11 @@ public class Task {
     /**
      * Creates an incomplete task with the given description.
      *
-     * @param description Description of the task.
+    * @param description Description of the task.
      */
     public Task(String description) {
+        assert description != null && !description.isBlank()
+                : "Task descriptions must be validated before task creation";
         this.description = description;
         this.isDone = false;
     }
@@ -53,9 +55,11 @@ public class Task {
      * Reports whether the task description contains a keyword, ignoring case.
      *
      * @param keyword Non-empty keyword to search for.
-     * @return True if the description contains the keyword.
+    * @return True if the description contains the keyword.
      */
     public boolean hasDescriptionContaining(String keyword) {
+        assert keyword != null && !keyword.isBlank()
+                : "Search keywords must be validated before matching tasks";
         String normalizedDescription = description.toLowerCase(Locale.ROOT);
         String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
         return normalizedDescription.contains(normalizedKeyword);
