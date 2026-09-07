@@ -40,8 +40,21 @@ public final class Lumi {
      */
     public static void main(String[] args) {
         Ui ui = new Ui();
-        ui.showWelcome();
         Storage storage = new Storage(DATA_FILE);
+        ui.showWelcome();
+        ArrayList<Task> tasks = loadTasks(storage, ui);
+        ui.showDivider();
+        runCommandLoop(ui, storage, tasks);
+    }
+
+    /**
+     * Loads saved tasks and reports recoverable storage problems.
+     *
+     * @param storage Storage from which tasks are loaded.
+     * @param ui Console UI used to show loading warnings.
+     * @return Mutable list containing every successfully loaded task.
+     */
+    private static ArrayList<Task> loadTasks(Storage storage, Ui ui) {
         ArrayList<Task> tasks = new ArrayList<>();
         try {
             Storage.LoadResult loadResult = storage.load();
@@ -52,48 +65,23 @@ public final class Lumi {
         } catch (IOException error) {
             ui.showLoadingError();
         }
-        ui.showDivider();
+        return tasks;
+    }
 
+    /**
+     * Reads and executes console commands until input ends or Lumi receives {@code bye}.
+     *
+     * @param ui Console UI used for input and output.
+     * @param storage Storage updated after task changes.
+     * @param tasks Current mutable task list.
+     */
+    private static void runCommandLoop(Ui ui, Storage storage, List<Task> tasks) {
         while (ui.hasNextCommand()) {
             String command = ui.readCommand();
             ui.showDivider();
             try {
-                CommandType commandType = Parser.parseCommandType(command);
-                if (commandType == CommandType.BYE) {
-                    ui.showGoodbye();
-                    break;
-                }
-
-                if (commandType == CommandType.LIST) {
-                    ui.showTaskList(tasks);
-                } else if (commandType == CommandType.FIND) {
-                    String keyword = Parser.parseFindKeyword(command);
-                    List<Task> matchingTasks = tasks.stream()
-                            .filter(task -> task.hasDescriptionContaining(keyword))
-                            .toList();
-                    ui.showMatchingTasks(matchingTasks);
-                } else if (commandType == CommandType.MARK) {
-                    int taskIndex = Parser.parseTaskIndex(command, commandType, tasks.size());
-                    tasks.get(taskIndex).markAsDone();
-                    ui.showMarked(tasks.get(taskIndex));
-                    saveTasks(storage, tasks, ui);
-                } else if (commandType == CommandType.UNMARK) {
-                    int taskIndex = Parser.parseTaskIndex(command, commandType, tasks.size());
-                    tasks.get(taskIndex).markAsNotDone();
-                    ui.showUnmarked(tasks.get(taskIndex));
-                    saveTasks(storage, tasks, ui);
-                } else if (commandType == CommandType.DELETE) {
-                    int taskIndex = Parser.parseTaskIndex(command, commandType, tasks.size());
-                    Task removedTask = tasks.remove(taskIndex);
-                    ui.showDeleted(removedTask, tasks.size());
-                    saveTasks(storage, tasks, ui);
-                } else if (commandType == CommandType.TODO
-                        || commandType == CommandType.DEADLINE
-                        || commandType == CommandType.EVENT) {
-                    Task newTask = Parser.parseTask(command, commandType);
-                    tasks.add(newTask);
-                    ui.showAdded(newTask, tasks.size());
-                    saveTasks(storage, tasks, ui);
+                if (!executeCommand(command, ui, storage, tasks)) {
+                    return;
                 }
             } catch (LumiException error) {
                 ui.showError(error.getMessage());
@@ -101,6 +89,95 @@ public final class Lumi {
                 ui.showDivider();
             }
         }
+    }
+
+    /**
+     * Executes one parsed command.
+     *
+     * @param command Complete user command.
+     * @param ui Console UI used to display the result.
+     * @param storage Storage updated after task changes.
+     * @param tasks Current mutable task list.
+     * @return False when the command ends the application; true otherwise.
+     * @throws LumiException If the command or its arguments are invalid.
+     */
+    private static boolean executeCommand(String command, Ui ui, Storage storage,
+            List<Task> tasks) throws LumiException {
+        CommandType commandType = Parser.parseCommandType(command);
+        switch (commandType) {
+            case BYE:
+                ui.showGoodbye();
+                return false;
+            case LIST:
+                ui.showTaskList(tasks);
+                break;
+            case FIND:
+                showMatchingTasks(command, tasks, ui);
+                break;
+            case MARK:
+            case UNMARK:
+                updateTaskStatus(command, commandType, tasks, storage, ui);
+                break;
+            case DELETE:
+                deleteTask(command, commandType, tasks, storage, ui);
+                break;
+            case TODO:
+            case DEADLINE:
+            case EVENT:
+                addTask(command, commandType, tasks, storage, ui);
+                break;
+            default:
+                throw new LumiException("Hmm, I don't recognize that command.");
+        }
+        return true;
+    }
+
+    /** Finds and displays tasks whose descriptions contain the requested keyword. */
+    private static void showMatchingTasks(String command, List<Task> tasks, Ui ui)
+            throws LumiException {
+        String keyword = Parser.parseFindKeyword(command);
+        List<Task> matchingTasks = tasks.stream()
+                .filter(task -> task.hasDescriptionContaining(keyword))
+                .toList();
+        ui.showMatchingTasks(matchingTasks);
+    }
+
+    /** Marks or unmarks the task selected by a status command. */
+    private static void updateTaskStatus(String command, CommandType commandType,
+            List<Task> tasks, Storage storage, Ui ui) throws LumiException {
+        int taskIndex = Parser.parseTaskIndex(command, commandType, tasks.size());
+        Task task = tasks.get(taskIndex);
+        switch (commandType) {
+            case MARK:
+                task.markAsDone();
+                ui.showMarked(task);
+                break;
+            case UNMARK:
+                task.markAsNotDone();
+                ui.showUnmarked(task);
+                break;
+            default:
+                throw new IllegalArgumentException("Expected a mark or unmark command");
+        }
+        saveTasks(storage, tasks, ui);
+    }
+
+    /** Removes and displays the task selected by a delete command. */
+    private static void deleteTask(String command, CommandType commandType,
+            List<Task> tasks, Storage storage, Ui ui) throws LumiException {
+        int taskIndex = Parser.parseTaskIndex(command, commandType, tasks.size());
+        Task removedTask = tasks.remove(taskIndex);
+        ui.showDeleted(removedTask, tasks.size());
+        saveTasks(storage, tasks, ui);
+    }
+
+    /** Creates, stores, and displays the task described by an add command. */
+    private static void addTask(String command, CommandType commandType,
+            List<Task> tasks, Storage storage, Ui ui) throws LumiException {
+        Task newTask = Parser.parseTask(command, commandType);
+        tasks.add(newTask);
+        ui.showAdded(newTask, tasks.size());
+        saveTasks(storage, tasks, ui);
     }
 
     /**
