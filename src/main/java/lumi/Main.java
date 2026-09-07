@@ -19,21 +19,18 @@ public class Main extends Application {
      * Creates and displays the primary application window.
      *
      * @param stage Primary stage provided by JavaFX.
+     * @throws IOException If the main window layout cannot be loaded.
      */
     @Override
-    public void start(Stage stage) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
-            AnchorPane mainLayout = fxmlLoader.load();
-            Scene scene = new Scene(mainLayout);
-            stage.setScene(scene);
-            fxmlLoader.<MainWindow>getController().setLumi(lumi);
-            stage.setTitle("Lumi");
-            stage.setMinHeight(220);
-            stage.setMinWidth(417);
-            stage.show();
-        } catch (IOException error) {
-            error.printStackTrace();
-        }
+    public void start(Stage stage) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
+        AnchorPane mainLayout = fxmlLoader.load();
+        Scene scene = new Scene(mainLayout);
+        stage.setScene(scene);
+        fxmlLoader.<MainWindow>getController().setLumi(lumi);
+        stage.setTitle("Lumi");
+        stage.setMinHeight(220);
+        stage.setMinWidth(417);
+        stage.show();
     }
 }
