@@ -9,6 +9,8 @@ import lumi.command.CommandType;
 import lumi.exception.LumiException;
 import lumi.parser.Parser;
 import lumi.storage.Storage;
+import lumi.task.Deadline;
+import lumi.task.Event;
 import lumi.task.Task;
 import lumi.ui.Ui;
 
@@ -120,6 +122,9 @@ public final class Lumi {
                 task.markAsNotDone();
                 return saveTasks(" OK, I've marked this task as not done yet:\n   " + task);
             }
+            if (commandType == CommandType.SNOOZE) {
+                return snoozeTask(command);
+            }
             if (commandType == CommandType.DELETE) {
                 int taskIndex = getTaskIndex(command, commandType);
                 int previousTaskCount = tasks.size();
@@ -201,6 +206,20 @@ public final class Lumi {
         assert taskIndex >= 0 && taskIndex < tasks.size()
                 : "Parser must return an index within the current task list";
         return taskIndex;
+    }
+
+    /** Reschedules a deadline or event and saves its updated schedule. */
+    private String snoozeTask(String command) throws LumiException {
+        Parser.SnoozeRequest request = Parser.parseSnoozeRequest(command, tasks.size());
+        Task task = tasks.get(request.taskIndex());
+        if (task instanceof Deadline deadline) {
+            deadline.reschedule(request.newDateTime());
+        } else if (task instanceof Event event) {
+            event.reschedule(request.newDateTime());
+        } else {
+            throw new LumiException("Hmm, only deadlines and events can be snoozed.");
+        }
+        return saveTasks(" Okay, I've rescheduled this task:\n   " + task);
     }
 
     /**

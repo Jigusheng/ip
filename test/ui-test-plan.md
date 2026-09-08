@@ -135,11 +135,11 @@ bye
 ---
  Hmm, a todo needs a description. Try: todo <description>
 ---
- Hmm, I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, or bye.
+ Hmm, I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, snooze, or bye.
 ---
- Hmm, I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, or bye.
+ Hmm, I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, snooze, or bye.
 ---
- Hmm, I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, or bye.
+ Hmm, I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, snooze, or bye.
 ---
  Hmm, a deadline needs a due date. Try: deadline <description> /by <when>
 ---
@@ -453,7 +453,7 @@ bye
 ```text
  Hmm, tell me what to find. Try: find <keyword>
 ---
- Hmm, I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, or bye.
+ Hmm, I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, snooze, or bye.
 ---
  Got it. I've added this task:
    [T][ ] read book
@@ -496,4 +496,93 @@ bye
  4.[T][ ] write notes
 ---
  Bye for now! Keep shining, and I hope to see you again soon!
+```
+
+## TC-09: Snooze deadlines and events
+
+Aim: Verify that snooze reschedules deadlines, moves events without changing their duration, persists the new schedule, and rejects malformed or unsupported requests without changing task state.
+
+### Inputs
+
+```text
+snooze 1 /to 2019-10-20
+todo read book
+deadline submit report /by 2019-10-15
+event project meeting /from 2019-10-16 1400 /to 2019-10-16 1600
+snooze
+snooze first /to 2019-10-20
+snooze 0 /to 2019-10-20
+snooze 4 /to 2019-10-20
+snooze 1 /to 2019-10-20
+snooze 2
+snooze 2 /to
+snooze 2 /towards 2019-10-20
+snooze 2 /to 2019-02-29
+list
+snooze 2 /to 2019-10-20 1800
+snooze 3 /to 2019-10-21 1500
+list
+bye
+```
+
+### Expected outputs
+
+```text
+ Hmm, there are no tasks to snooze yet.
+---
+ Got it. I've added this task:
+   [T][ ] read book
+ Now you have 1 tasks in the list.
+---
+ Got it. I've added this task:
+   [D][ ] submit report (by: Oct 15 2019)
+ Now you have 2 tasks in the list.
+---
+ Got it. I've added this task:
+   [E][ ] project meeting (from: Oct 16 2019, 2:00PM to: Oct 16 2019, 4:00PM)
+ Now you have 3 tasks in the list.
+---
+ Hmm, tell me which task to snooze. Try: snooze <task number> /to <when>
+---
+ Hmm, the task number must be a whole number.
+---
+ Hmm, choose a task number from 1 to 3.
+---
+ Hmm, choose a task number from 1 to 3.
+---
+ Hmm, only deadlines and events can be snoozed.
+---
+ Hmm, tell me when to snooze the task until. Try: snooze <task number> /to <when>
+---
+ Hmm, the /to value cannot be empty.
+---
+ Hmm, tell me when to snooze the task until. Try: snooze <task number> /to <when>
+---
+ Hmm, use a date like 2019-10-15 or 2/12/2019, optionally followed by a 24-hour time such as 1800.
+---
+ Here are the tasks in your list:
+ 1.[T][ ] read book
+ 2.[D][ ] submit report (by: Oct 15 2019)
+ 3.[E][ ] project meeting (from: Oct 16 2019, 2:00PM to: Oct 16 2019, 4:00PM)
+---
+ Okay, I've rescheduled this task:
+   [D][ ] submit report (by: Oct 20 2019, 6:00PM)
+---
+ Okay, I've rescheduled this task:
+   [E][ ] project meeting (from: Oct 21 2019, 3:00PM to: Oct 21 2019, 5:00PM)
+---
+ Here are the tasks in your list:
+ 1.[T][ ] read book
+ 2.[D][ ] submit report (by: Oct 20 2019, 6:00PM)
+ 3.[E][ ] project meeting (from: Oct 21 2019, 3:00PM to: Oct 21 2019, 5:00PM)
+---
+ Bye for now! Keep shining, and I hope to see you again soon!
+```
+
+### Expected data
+
+```text
+T | 0 | read book
+D | 0 | submit report | 2019-10-20T18:00:00
+E | 0 | project meeting | 2019-10-21T15:00:00 | 2019-10-21T17:00:00
 ```

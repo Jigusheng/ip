@@ -67,6 +67,34 @@ public class LumiTest {
     }
 
     @Test
+    public void getResponse_snoozeDatedTasks_schedulesAndStatusPersist() {
+        Path dataFile = temporaryDirectory.resolve("lumi.txt");
+        Lumi lumi = new Lumi(dataFile);
+        lumi.getResponse("todo read book");
+        lumi.getResponse("deadline submit report /by 2019-10-15");
+        lumi.getResponse("event meeting /from 2019-10-16 1400 /to 2019-10-16 1600");
+        lumi.getResponse("mark 2");
+
+        assertEquals(" Okay, I've rescheduled this task:\n"
+                        + "   [D][X] submit report (by: Oct 20 2019, 6:00PM)",
+                lumi.getResponse("snooze 2 /to 2019-10-20 1800"));
+        assertEquals(" Okay, I've rescheduled this task:\n"
+                        + "   [E][ ] meeting (from: Oct 21 2019, 3:00PM"
+                        + " to: Oct 21 2019, 5:00PM)",
+                lumi.getResponse("snooze 3 /to 2019-10-21 1500"));
+        assertEquals(" Hmm, only deadlines and events can be snoozed.",
+                lumi.getResponse("snooze 1 /to 2019-10-22"));
+
+        Lumi reloadedLumi = new Lumi(dataFile);
+        assertEquals(" Here are the tasks in your list:\n"
+                        + " 1.[T][ ] read book\n"
+                        + " 2.[D][X] submit report (by: Oct 20 2019, 6:00PM)\n"
+                        + " 3.[E][ ] meeting (from: Oct 21 2019, 3:00PM"
+                        + " to: Oct 21 2019, 5:00PM)",
+                reloadedLumi.getResponse("list"));
+    }
+
+    @Test
     public void getResponse_bye_farewellReturnedAndSessionEnded() {
         Lumi lumi = new Lumi(temporaryDirectory.resolve("lumi.txt"));
 

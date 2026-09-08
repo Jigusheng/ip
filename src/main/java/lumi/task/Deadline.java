@@ -9,7 +9,7 @@ import lumi.datetime.DateTimeParser;
  */
 public class Deadline extends Task {
     /** The date or time by which the task must be completed. */
-    private final LocalDateTime by;
+    private LocalDateTime by;
 
     /**
      * Creates an incomplete deadline task.
@@ -29,6 +29,15 @@ public class Deadline extends Task {
      */
     public LocalDateTime getBy() {
         return by;
+    }
+
+    /**
+     * Moves this deadline to a new due date or time.
+     *
+     * @param newDueDate New date or time by which the task must be completed.
+     */
+    public void reschedule(LocalDateTime newDueDate) {
+        by = newDueDate;
     }
 
     /**

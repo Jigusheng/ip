@@ -28,6 +28,9 @@ public enum CommandType {
     /** Removes a stored task. */
     DELETE("delete", true),
 
+    /** Reschedules a deadline or event. */
+    SNOOZE("snooze", true),
+
     /** Ends the application. */
     BYE("bye", false),
 

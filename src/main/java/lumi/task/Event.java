@@ -1,5 +1,6 @@
 package lumi.task;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import lumi.datetime.DateTimeParser;
@@ -9,10 +10,10 @@ import lumi.datetime.DateTimeParser;
  */
 public class Event extends Task {
     /** The date or time at which the event starts. */
-    private final LocalDateTime from;
+    private LocalDateTime from;
 
     /** The date or time at which the event ends. */
-    private final LocalDateTime to;
+    private LocalDateTime to;
 
     /**
      * Creates an incomplete event task.
@@ -43,6 +44,17 @@ public class Event extends Task {
      */
     public LocalDateTime getTo() {
         return to;
+    }
+
+    /**
+     * Moves this event to a new start date or time while preserving its duration.
+     *
+     * @param newStartDate New date or time at which the event starts.
+     */
+    public void reschedule(LocalDateTime newStartDate) {
+        Duration duration = Duration.between(from, to);
+        from = newStartDate;
+        to = newStartDate.plus(duration);
     }
 
     /**

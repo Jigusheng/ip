@@ -32,6 +32,7 @@ public class ParserTest {
         assertEquals(CommandType.MARK, Parser.parseCommandType("mark"));
         assertEquals(CommandType.UNMARK, Parser.parseCommandType("unmark"));
         assertEquals(CommandType.DELETE, Parser.parseCommandType("delete"));
+        assertEquals(CommandType.SNOOZE, Parser.parseCommandType("snooze"));
         assertEquals(CommandType.BYE, Parser.parseCommandType("bye"));
     }
 
@@ -48,6 +49,8 @@ public class ParserTest {
         assertEquals(CommandType.MARK, Parser.parseCommandType("mark 1"));
         assertEquals(CommandType.UNMARK, Parser.parseCommandType("unmark 1"));
         assertEquals(CommandType.DELETE, Parser.parseCommandType("delete 1"));
+        assertEquals(CommandType.SNOOZE,
+                Parser.parseCommandType("snooze 1 /to 2019-10-20"));
     }
 
     @Test
@@ -58,7 +61,7 @@ public class ParserTest {
     @Test
     public void parseCommandType_unknownPartialOrExtraInput_exceptionThrown() {
         String expectedMessage = "Hmm, I don't recognize that command. "
-                + "Try todo, deadline, event, list, find, mark, unmark, delete, or bye.";
+                + "Try todo, deadline, event, list, find, mark, unmark, delete, snooze, or bye.";
 
         assertLumiExceptionMessage(expectedMessage, () -> Parser.parseCommandType("unknown"));
         assertLumiExceptionMessage(expectedMessage, () -> Parser.parseCommandType("todos"));
@@ -80,6 +83,51 @@ public class ParserTest {
                 "Hmm, tell me what to find. Try: find <keyword>", () -> Parser.parseFindKeyword("find"));
         assertLumiExceptionMessage(
                 "Hmm, tell me what to find. Try: find <keyword>", () -> Parser.parseFindKeyword("find   "));
+    }
+
+    @Test
+    public void parseSnoozeRequest_validRequest_indexAndDateTimeReturned()
+            throws LumiException {
+        Parser.SnoozeRequest request = Parser.parseSnoozeRequest(
+                "snooze 2 /to 20/10/2019 1800", 3);
+
+        assertEquals(1, request.taskIndex());
+        assertEquals(LocalDateTime.of(2019, 10, 20, 18, 0), request.newDateTime());
+    }
+
+    @Test
+    public void parseSnoozeRequest_invalidSyntax_exceptionThrown() {
+        String missingTaskMessage = "Hmm, tell me which task to snooze. "
+                + "Try: snooze <task number> /to <when>";
+        String missingDateMessage = "Hmm, tell me when to snooze the task until. "
+                + "Try: snooze <task number> /to <when>";
+
+        assertLumiExceptionMessage(missingTaskMessage, () ->
+                Parser.parseSnoozeRequest("snooze", 3));
+        assertLumiExceptionMessage(missingTaskMessage, () ->
+                Parser.parseSnoozeRequest("snooze /to 2019-10-20", 3));
+        assertLumiExceptionMessage(missingDateMessage, () ->
+                Parser.parseSnoozeRequest("snooze 2", 3));
+        assertLumiExceptionMessage(missingDateMessage, () ->
+                Parser.parseSnoozeRequest("snooze 2 /towards 2019-10-20", 3));
+        assertLumiExceptionMessage("Hmm, the /to value cannot be empty.", () ->
+                Parser.parseSnoozeRequest("snooze 2 /to", 3));
+    }
+
+    @Test
+    public void parseSnoozeRequest_invalidTaskNumberOrDate_exceptionThrown() {
+        assertLumiExceptionMessage("Hmm, the task number must be a whole number.", () ->
+                Parser.parseSnoozeRequest("snooze first /to 2019-10-20", 3));
+        assertLumiExceptionMessage("Hmm, choose a task number from 1 to 3.", () ->
+                Parser.parseSnoozeRequest("snooze 0 /to 2019-10-20", 3));
+        assertLumiExceptionMessage("Hmm, choose a task number from 1 to 3.", () ->
+                Parser.parseSnoozeRequest("snooze 4 /to 2019-10-20", 3));
+        assertLumiExceptionMessage("Hmm, there are no tasks to snooze yet.", () ->
+                Parser.parseSnoozeRequest("snooze 1 /to 2019-10-20", 0));
+        assertLumiExceptionMessage(
+                "Hmm, use a date like 2019-10-15 or 2/12/2019, "
+                        + "optionally followed by a 24-hour time such as 1800.", () ->
+                                Parser.parseSnoozeRequest("snooze 2 /to 2019-02-29", 3));
     }
 
     @Test

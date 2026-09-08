@@ -1,5 +1,7 @@
 package lumi.parser;
 
+import java.time.LocalDateTime;
+
 import lumi.command.CommandType;
 import lumi.datetime.DateTimeParser;
 import lumi.exception.LumiException;
@@ -20,8 +22,8 @@ public final class Parser {
     /** Separates an event description from its start date. */
     private static final String EVENT_START_SEPARATOR = "/from";
 
-    /** Separates an event start date from its end date. */
-    private static final String EVENT_END_SEPARATOR = "/to";
+    /** Introduces an event end date or a new date for a snoozed task. */
+    private static final String TO_SEPARATOR = "/to";
 
     /** Prevents creation of this stateless utility class. */
     private Parser() {
@@ -47,7 +49,7 @@ public final class Parser {
             }
         }
         throw new LumiException("Hmm, I don't recognize that command. "
-                + "Try todo, deadline, event, list, find, mark, unmark, delete, or bye.");
+                + "Try todo, deadline, event, list, find, mark, unmark, delete, snooze, or bye.");
     }
 
     /**
@@ -111,7 +113,7 @@ public final class Parser {
         int startSeparatorPosition = findSeparator(details, EVENT_START_SEPARATOR, 0);
         int endSeparatorPosition = startSeparatorPosition < 0
                 ? -1
-                : findSeparator(details, EVENT_END_SEPARATOR,
+                : findSeparator(details, TO_SEPARATOR,
                         startSeparatorPosition + EVENT_START_SEPARATOR.length());
         if (startSeparatorPosition < 0 || endSeparatorPosition < 0) {
             throw new LumiException("Hmm, an event needs start and end details. "
@@ -122,7 +124,7 @@ public final class Parser {
         String startDateText = details.substring(
                 startSeparatorPosition + EVENT_START_SEPARATOR.length(), endSeparatorPosition).trim();
         String endDateText = details.substring(
-                endSeparatorPosition + EVENT_END_SEPARATOR.length()).trim();
+                endSeparatorPosition + TO_SEPARATOR.length()).trim();
         if (description.isEmpty()) {
             throw new LumiException("Hmm, an event needs a description before /from.");
         }
@@ -149,6 +151,43 @@ public final class Parser {
             throw new LumiException("Hmm, tell me what to find. Try: find <keyword>");
         }
         return keyword;
+    }
+
+    /**
+     * Extracts and validates the task number and new schedule from a snooze command.
+     *
+     * @param command Complete snooze command entered by the user.
+     * @param taskCount Number of tasks currently stored.
+     * @return Validated task index and replacement date or time.
+     * @throws LumiException If the task number or replacement date is invalid.
+     */
+    public static SnoozeRequest parseSnoozeRequest(String command, int taskCount)
+            throws LumiException {
+        String details = extractCommandDetails(command, CommandType.SNOOZE);
+        if (details.isEmpty()) {
+            throw new LumiException("Hmm, tell me which task to snooze. "
+                    + "Try: snooze <task number> /to <when>");
+        }
+
+        int separatorPosition = findSeparator(details, TO_SEPARATOR, 0);
+        if (separatorPosition < 0) {
+            throw new LumiException("Hmm, tell me when to snooze the task until. "
+                    + "Try: snooze <task number> /to <when>");
+        }
+
+        String taskNumberText = details.substring(0, separatorPosition).trim();
+        if (taskNumberText.isEmpty()) {
+            throw new LumiException("Hmm, tell me which task to snooze. "
+                    + "Try: snooze <task number> /to <when>");
+        }
+
+        int taskIndex = parseTaskIndex("snooze " + taskNumberText,
+                CommandType.SNOOZE, taskCount);
+        String newDateTimeText = details.substring(separatorPosition + TO_SEPARATOR.length()).trim();
+        if (newDateTimeText.isEmpty()) {
+            throw new LumiException("Hmm, the /to value cannot be empty.");
+        }
+        return new SnoozeRequest(taskIndex, DateTimeParser.parseUserInput(newDateTimeText));
     }
 
     /**
@@ -209,5 +248,14 @@ public final class Parser {
             position = text.indexOf(separator, position + 1);
         }
         return -1;
+    }
+
+    /**
+     * Contains the validated details needed to reschedule a task.
+     *
+     * @param taskIndex Zero-based index of the task to reschedule.
+     * @param newDateTime New date or time for the task.
+     */
+    public record SnoozeRequest(int taskIndex, LocalDateTime newDateTime) {
     }
 }
