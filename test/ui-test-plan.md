@@ -22,35 +22,35 @@ bye
 ### Expected outputs
 
 ```text
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [T][ ] borrow book
- Now you have 1 tasks in the list.
+ Your map now holds 1 task.
 ---
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [D][ ] return book (by: Oct 15 2019)
- Now you have 2 tasks in the list.
+ Your map now holds 2 tasks.
 ---
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [E][ ] project meeting (from: Oct 16 2019, 2:00PM to: Oct 16 2019, 4:00PM)
- Now you have 3 tasks in the list.
+ Your map now holds 3 tasks.
 ---
- Nice! I've marked this task as done:
+ A little brighter. This task is complete:
    [T][X] borrow book
 ---
- Here are the tasks in your list:
+ Here's your current constellation:
  1.[T][X] borrow book
  2.[D][ ] return book (by: Oct 15 2019)
  3.[E][ ] project meeting (from: Oct 16 2019, 2:00PM to: Oct 16 2019, 4:00PM)
 ---
- OK, I've marked this task as not done yet:
+ Back in orbit. This task is active again:
    [T][ ] borrow book
 ---
- Here are the tasks in your list:
+ Here's your current constellation:
  1.[T][ ] borrow book
  2.[D][ ] return book (by: Oct 15 2019)
  3.[E][ ] project meeting (from: Oct 16 2019, 2:00PM to: Oct 16 2019, 4:00PM)
 ---
- Bye for now! Keep shining, and I hope to see you again soon!
+ Until next time. Your tasks are safe here.
 ```
 
 ## TC-02: Parsed deadline dates and times
@@ -72,25 +72,25 @@ bye
 ### Expected outputs
 
 ```text
- Hmm, use a date like 2019-10-15 or 2/12/2019, optionally followed by a 24-hour time such as 1800.
+ Signal unclear: use a date like 2019-10-15 or 2/12/2019, optionally followed by a 24-hour time such as 1800.
 ---
- Hmm, use a date like 2019-10-15 or 2/12/2019, optionally followed by a 24-hour time such as 1800.
+ Signal unclear: use a date like 2019-10-15 or 2/12/2019, optionally followed by a 24-hour time such as 1800.
 ---
- Hmm, use a date like 2019-10-15 or 2/12/2019, optionally followed by a 24-hour time such as 1800.
+ Signal unclear: use a date like 2019-10-15 or 2/12/2019, optionally followed by a 24-hour time such as 1800.
 ---
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [D][ ] do homework (by: Oct 15 2019)
- Now you have 1 tasks in the list.
+ Your map now holds 1 task.
 ---
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [D][ ] return book (by: Dec 02 2019, 6:00PM)
- Now you have 2 tasks in the list.
+ Your map now holds 2 tasks.
 ---
- Here are the tasks in your list:
+ Here's your current constellation:
  1.[D][ ] do homework (by: Oct 15 2019)
  2.[D][ ] return book (by: Dec 02 2019, 6:00PM)
 ---
- Bye for now! Keep shining, and I hope to see you again soon!
+ Until next time. Your tasks are safe here.
 ```
 
 ### Expected data
@@ -131,46 +131,46 @@ bye
 ### Expected outputs
 
 ```text
- Hmm, please enter a command.
+ Signal unclear: please enter a command.
 ---
- Hmm, a todo needs a description. Try: todo <description>
+ Signal unclear: a todo needs a description. Try: todo <description>
 ---
- Hmm, I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, snooze, or bye.
+ Signal unclear: I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, snooze, or bye.
 ---
- Hmm, I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, snooze, or bye.
+ Signal unclear: I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, snooze, or bye.
 ---
- Hmm, I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, snooze, or bye.
+ Signal unclear: I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, snooze, or bye.
 ---
- Hmm, a deadline needs a due date. Try: deadline <description> /by <when>
+ Signal unclear: a deadline needs a due date. Try: deadline <description> /by <when>
 ---
- Hmm, a deadline needs a description before /by.
+ Signal unclear: a deadline needs a description before /by.
 ---
- Hmm, the /by value cannot be empty.
+ Signal unclear: the /by value cannot be empty.
 ---
- Hmm, a deadline needs a due date. Try: deadline <description> /by <when>
+ Signal unclear: a deadline needs a due date. Try: deadline <description> /by <when>
 ---
- Hmm, an event needs start and end details. Try: event <description> /from <start> /to <end>
+ Signal unclear: an event needs start and end details. Try: event <description> /from <start> /to <end>
 ---
- Hmm, an event needs start and end details. Try: event <description> /from <start> /to <end>
+ Signal unclear: an event needs start and end details. Try: event <description> /from <start> /to <end>
 ---
- Hmm, an event needs a description before /from.
+ Signal unclear: an event needs a description before /from.
 ---
- Hmm, the /from value cannot be empty.
+ Signal unclear: the /from value cannot be empty.
 ---
- Hmm, the /to value cannot be empty.
+ Signal unclear: the /to value cannot be empty.
 ---
- Hmm, use a date like 2019-10-15 or 2/12/2019, optionally followed by a 24-hour time such as 1800.
+ Signal unclear: use a date like 2019-10-15 or 2/12/2019, optionally followed by a 24-hour time such as 1800.
 ---
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [T][ ] valid task
- Now you have 1 tasks in the list.
+ Your map now holds 1 task.
 ---
- Hmm, use a date like 2019-10-15 or 2/12/2019, optionally followed by a 24-hour time such as 1800.
+ Signal unclear: use a date like 2019-10-15 or 2/12/2019, optionally followed by a 24-hour time such as 1800.
 ---
- Here are the tasks in your list:
+ Here's your current constellation:
  1.[T][ ] valid task
 ---
- Bye for now! Keep shining, and I hope to see you again soon!
+ Until next time. Your tasks are safe here.
 ```
 
 ## TC-04: Delete tasks and renumber the list
@@ -196,45 +196,45 @@ bye
 ### Expected outputs
 
 ```text
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [T][ ] read book
- Now you have 1 tasks in the list.
+ Your map now holds 1 task.
 ---
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [D][ ] return book (by: Jun 06 2019)
- Now you have 2 tasks in the list.
+ Your map now holds 2 tasks.
 ---
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [E][ ] project meeting (from: Aug 06 2019, 2:00PM to: Aug 06 2019, 4:00PM)
- Now you have 3 tasks in the list.
+ Your map now holds 3 tasks.
 ---
- Nice! I've marked this task as done:
+ A little brighter. This task is complete:
    [T][X] read book
 ---
- Nice! I've marked this task as done:
+ A little brighter. This task is complete:
    [D][X] return book (by: Jun 06 2019)
 ---
- Here are the tasks in your list:
+ Here's your current constellation:
  1.[T][X] read book
  2.[D][X] return book (by: Jun 06 2019)
  3.[E][ ] project meeting (from: Aug 06 2019, 2:00PM to: Aug 06 2019, 4:00PM)
 ---
- Noted. I've removed this task:
+ Cleared from the map. I've removed this task:
    [E][ ] project meeting (from: Aug 06 2019, 2:00PM to: Aug 06 2019, 4:00PM)
- Now you have 2 tasks in the list.
+ Your map now holds 2 tasks.
 ---
- Here are the tasks in your list:
+ Here's your current constellation:
  1.[T][X] read book
  2.[D][X] return book (by: Jun 06 2019)
 ---
- Noted. I've removed this task:
+ Cleared from the map. I've removed this task:
    [T][X] read book
- Now you have 1 tasks in the list.
+ Your map now holds 1 task.
 ---
- Here are the tasks in your list:
+ Here's your current constellation:
  1.[D][X] return book (by: Jun 06 2019)
 ---
- Bye for now! Keep shining, and I hope to see you again soon!
+ Until next time. Your tasks are safe here.
 ```
 
 ## TC-05: Invalid delete commands preserve the list
@@ -263,44 +263,44 @@ bye
 ### Expected outputs
 
 ```text
- Hmm, there are no tasks to delete yet.
+ Signal unclear: there are no tasks to delete yet.
 ---
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [T][ ] keep this task
- Now you have 1 tasks in the list.
+ Your map now holds 1 task.
 ---
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [D][ ] remove this task (by: Oct 16 2019)
- Now you have 2 tasks in the list.
+ Your map now holds 2 tasks.
 ---
- Hmm, tell me which task to delete. Try: delete <task number>
+ Signal unclear: tell me which task to delete. Try: delete <task number>
 ---
- Hmm, the task number must be a whole number.
+ Signal unclear: the task number must be a whole number.
 ---
- Hmm, choose a task number from 1 to 2.
+ Signal unclear: choose a task number from 1 to 2.
 ---
- Hmm, choose a task number from 1 to 2.
+ Signal unclear: choose a task number from 1 to 2.
 ---
- Here are the tasks in your list:
+ Here's your current constellation:
  1.[T][ ] keep this task
  2.[D][ ] remove this task (by: Oct 16 2019)
 ---
- Noted. I've removed this task:
+ Cleared from the map. I've removed this task:
    [D][ ] remove this task (by: Oct 16 2019)
- Now you have 1 tasks in the list.
+ Your map now holds 1 task.
 ---
- Hmm, choose a task number from 1 to 1.
+ Signal unclear: choose a task number from 1 to 1.
 ---
- Here are the tasks in your list:
+ Here's your current constellation:
  1.[T][ ] keep this task
 ---
- Noted. I've removed this task:
+ Cleared from the map. I've removed this task:
    [T][ ] keep this task
- Now you have 0 tasks in the list.
+ Your map now holds 0 tasks.
 ---
- Here are the tasks in your list:
+ Here's your current constellation:
 ---
- Bye for now! Keep shining, and I hope to see you again soon!
+ Until next time. Your tasks are safe here.
 ```
 
 ## TC-06: Invalid mark commands preserve status
@@ -328,38 +328,38 @@ bye
 ### Expected outputs
 
 ```text
- Hmm, there are no tasks to mark yet.
+ Signal unclear: there are no tasks to mark yet.
 ---
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [T][ ] read book
- Now you have 1 tasks in the list.
+ Your map now holds 1 task.
 ---
- Hmm, tell me which task to mark. Try: mark <task number>
+ Signal unclear: tell me which task to mark. Try: mark <task number>
 ---
- Hmm, the task number must be a whole number.
+ Signal unclear: the task number must be a whole number.
 ---
- Hmm, choose a task number from 1 to 1.
+ Signal unclear: choose a task number from 1 to 1.
 ---
- Here are the tasks in your list:
+ Here's your current constellation:
  1.[T][ ] read book
 ---
- Nice! I've marked this task as done:
+ A little brighter. This task is complete:
    [T][X] read book
 ---
- Hmm, choose a task number from 1 to 1.
+ Signal unclear: choose a task number from 1 to 1.
 ---
- Hmm, tell me which task to unmark. Try: unmark <task number>
+ Signal unclear: tell me which task to unmark. Try: unmark <task number>
 ---
- Here are the tasks in your list:
+ Here's your current constellation:
  1.[T][X] read book
 ---
- OK, I've marked this task as not done yet:
+ Back in orbit. This task is active again:
    [T][ ] read book
 ---
- Here are the tasks in your list:
+ Here's your current constellation:
  1.[T][ ] read book
 ---
- Bye for now! Keep shining, and I hope to see you again soon!
+ Until next time. Your tasks are safe here.
 ```
 
 ## TC-07: Load and automatically save tasks
@@ -390,31 +390,31 @@ bye
 ### Expected outputs
 
 ```text
- Here are the tasks in your list:
+ Here's your current constellation:
  1.[T][X] read book
  2.[D][ ] return book (by: Jun 06 2019)
  3.[E][ ] project meeting (from: Aug 06 2019, 2:00PM to: Aug 06 2019, 4:00PM)
 ---
- OK, I've marked this task as not done yet:
+ Back in orbit. This task is active again:
    [T][ ] read book
 ---
- Nice! I've marked this task as done:
+ A little brighter. This task is complete:
    [D][X] return book (by: Jun 06 2019)
 ---
- Noted. I've removed this task:
+ Cleared from the map. I've removed this task:
    [E][ ] project meeting (from: Aug 06 2019, 2:00PM to: Aug 06 2019, 4:00PM)
- Now you have 2 tasks in the list.
+ Your map now holds 2 tasks.
 ---
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [T][ ] join sports club
- Now you have 3 tasks in the list.
+ Your map now holds 3 tasks.
 ---
- Here are the tasks in your list:
+ Here's your current constellation:
  1.[T][ ] read book
  2.[D][X] return book (by: Jun 06 2019)
  3.[T][ ] join sports club
 ---
- Bye for now! Keep shining, and I hope to see you again soon!
+ Until next time. Your tasks are safe here.
 ```
 
 ### Expected data
@@ -451,51 +451,51 @@ bye
 ### Expected outputs
 
 ```text
- Hmm, tell me what to find. Try: find <keyword>
+ Signal unclear: tell me what to find. Try: find <keyword>
 ---
- Hmm, I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, snooze, or bye.
+ Signal unclear: I don't recognize that command. Try todo, deadline, event, list, find, mark, unmark, delete, snooze, or bye.
 ---
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [T][ ] read book
- Now you have 1 tasks in the list.
+ Your map now holds 1 task.
 ---
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [D][ ] return BOOK (by: Jun 06 2019)
- Now you have 2 tasks in the list.
+ Your map now holds 2 tasks.
 ---
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [E][ ] book club (from: Aug 06 2019, 2:00PM to: Aug 06 2019, 4:00PM)
- Now you have 3 tasks in the list.
+ Your map now holds 3 tasks.
 ---
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [T][ ] write notes
- Now you have 4 tasks in the list.
+ Your map now holds 4 tasks.
 ---
- Nice! I've marked this task as done:
+ A little brighter. This task is complete:
    [T][X] read book
 ---
- Nice! I've marked this task as done:
+ A little brighter. This task is complete:
    [D][X] return BOOK (by: Jun 06 2019)
 ---
- Here are the matching tasks in your list:
+ These tasks match your signal:
  1.[T][X] read book
  2.[D][X] return BOOK (by: Jun 06 2019)
  3.[E][ ] book club (from: Aug 06 2019, 2:00PM to: Aug 06 2019, 4:00PM)
 ---
- Here are the matching tasks in your list:
+ These tasks match your signal:
  1.[E][ ] book club (from: Aug 06 2019, 2:00PM to: Aug 06 2019, 4:00PM)
 ---
- Here are the matching tasks in your list:
+ These tasks match your signal:
 ---
- Here are the matching tasks in your list:
+ These tasks match your signal:
 ---
- Here are the tasks in your list:
+ Here's your current constellation:
  1.[T][X] read book
  2.[D][X] return BOOK (by: Jun 06 2019)
  3.[E][ ] book club (from: Aug 06 2019, 2:00PM to: Aug 06 2019, 4:00PM)
  4.[T][ ] write notes
 ---
- Bye for now! Keep shining, and I hope to see you again soon!
+ Until next time. Your tasks are safe here.
 ```
 
 ## TC-09: Snooze deadlines and events
@@ -528,55 +528,55 @@ bye
 ### Expected outputs
 
 ```text
- Hmm, there are no tasks to snooze yet.
+ Signal unclear: there are no tasks to snooze yet.
 ---
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [T][ ] read book
- Now you have 1 tasks in the list.
+ Your map now holds 1 task.
 ---
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [D][ ] submit report (by: Oct 15 2019)
- Now you have 2 tasks in the list.
+ Your map now holds 2 tasks.
 ---
- Got it. I've added this task:
+ It's on the map. I've added this task:
    [E][ ] project meeting (from: Oct 16 2019, 2:00PM to: Oct 16 2019, 4:00PM)
- Now you have 3 tasks in the list.
+ Your map now holds 3 tasks.
 ---
- Hmm, tell me which task to snooze. Try: snooze <task number> /to <when>
+ Signal unclear: tell me which task to snooze. Try: snooze <task number> /to <when>
 ---
- Hmm, the task number must be a whole number.
+ Signal unclear: the task number must be a whole number.
 ---
- Hmm, choose a task number from 1 to 3.
+ Signal unclear: choose a task number from 1 to 3.
 ---
- Hmm, choose a task number from 1 to 3.
+ Signal unclear: choose a task number from 1 to 3.
 ---
- Hmm, only deadlines and events can be snoozed.
+ Signal unclear: only deadlines and events can be snoozed.
 ---
- Hmm, tell me when to snooze the task until. Try: snooze <task number> /to <when>
+ Signal unclear: tell me when to snooze the task until. Try: snooze <task number> /to <when>
 ---
- Hmm, the /to value cannot be empty.
+ Signal unclear: the /to value cannot be empty.
 ---
- Hmm, tell me when to snooze the task until. Try: snooze <task number> /to <when>
+ Signal unclear: tell me when to snooze the task until. Try: snooze <task number> /to <when>
 ---
- Hmm, use a date like 2019-10-15 or 2/12/2019, optionally followed by a 24-hour time such as 1800.
+ Signal unclear: use a date like 2019-10-15 or 2/12/2019, optionally followed by a 24-hour time such as 1800.
 ---
- Here are the tasks in your list:
+ Here's your current constellation:
  1.[T][ ] read book
  2.[D][ ] submit report (by: Oct 15 2019)
  3.[E][ ] project meeting (from: Oct 16 2019, 2:00PM to: Oct 16 2019, 4:00PM)
 ---
- Okay, I've rescheduled this task:
+ Orbit adjusted. I've rescheduled this task:
    [D][ ] submit report (by: Oct 20 2019, 6:00PM)
 ---
- Okay, I've rescheduled this task:
+ Orbit adjusted. I've rescheduled this task:
    [E][ ] project meeting (from: Oct 21 2019, 3:00PM to: Oct 21 2019, 5:00PM)
 ---
- Here are the tasks in your list:
+ Here's your current constellation:
  1.[T][ ] read book
  2.[D][ ] submit report (by: Oct 20 2019, 6:00PM)
  3.[E][ ] project meeting (from: Oct 21 2019, 3:00PM to: Oct 21 2019, 5:00PM)
 ---
- Bye for now! Keep shining, and I hope to see you again soon!
+ Until next time. Your tasks are safe here.
 ```
 
 ### Expected data

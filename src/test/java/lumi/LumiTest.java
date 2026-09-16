@@ -21,33 +21,33 @@ public class LumiTest {
         Path dataFile = temporaryDirectory.resolve("data").resolve("lumi.txt");
         Lumi lumi = new Lumi(dataFile);
 
-        assertEquals(" Got it. I've added this task:\n"
+        assertEquals(" It's on the map. I've added this task:\n"
                         + "   [T][ ] read book\n"
-                        + " Now you have 1 tasks in the list.",
+                        + " Your map now holds 1 task.",
                 lumi.getResponse("todo read book"));
-        assertEquals(" Got it. I've added this task:\n"
+        assertEquals(" It's on the map. I've added this task:\n"
                         + "   [D][ ] return book (by: Oct 15 2019)\n"
-                        + " Now you have 2 tasks in the list.",
+                        + " Your map now holds 2 tasks.",
                 lumi.getResponse("deadline return book /by 2019-10-15"));
-        assertEquals(" Got it. I've added this task:\n"
+        assertEquals(" It's on the map. I've added this task:\n"
                         + "   [E][ ] project meeting (from: Oct 16 2019, 2:00PM"
                         + " to: Oct 16 2019, 4:00PM)\n"
-                        + " Now you have 3 tasks in the list.",
+                        + " Your map now holds 3 tasks.",
                 lumi.getResponse("event project meeting /from 2019-10-16 1400"
                         + " /to 2019-10-16 1600"));
-        assertEquals(" Nice! I've marked this task as done:\n   [T][X] read book",
+        assertEquals(" A little brighter. This task is complete:\n   [T][X] read book",
                 lumi.getResponse("mark 1"));
-        assertEquals(" OK, I've marked this task as not done yet:\n   [T][ ] read book",
+        assertEquals(" Back in orbit. This task is active again:\n   [T][ ] read book",
                 lumi.getResponse("unmark 1"));
-        assertEquals(" Here are the matching tasks in your list:\n"
+        assertEquals(" These tasks match your signal:\n"
                         + " 1.[T][ ] read book\n"
                         + " 2.[D][ ] return book (by: Oct 15 2019)",
                 lumi.getResponse("find book"));
-        assertEquals(" Noted. I've removed this task:\n"
+        assertEquals(" Cleared from the map. I've removed this task:\n"
                         + "   [D][ ] return book (by: Oct 15 2019)\n"
-                        + " Now you have 2 tasks in the list.",
+                        + " Your map now holds 2 tasks.",
                 lumi.getResponse("delete 2"));
-        assertEquals(" Here are the tasks in your list:\n"
+        assertEquals(" Here's your current constellation:\n"
                         + " 1.[T][ ] read book\n"
                         + " 2.[E][ ] project meeting (from: Oct 16 2019, 2:00PM"
                         + " to: Oct 16 2019, 4:00PM)",
@@ -61,9 +61,9 @@ public class LumiTest {
     public void getResponse_invalidCommand_errorReturnedWithoutChangingTasks() {
         Lumi lumi = new Lumi(temporaryDirectory.resolve("lumi.txt"));
 
-        assertEquals(" Hmm, a todo needs a description. Try: todo <description>",
+        assertEquals(" Signal unclear: a todo needs a description. Try: todo <description>",
                 lumi.getResponse("todo"));
-        assertEquals(" Here are the tasks in your list:", lumi.getResponse("list"));
+        assertEquals(" Here's your current constellation:", lumi.getResponse("list"));
     }
 
     @Test
@@ -75,18 +75,18 @@ public class LumiTest {
         lumi.getResponse("event meeting /from 2019-10-16 1400 /to 2019-10-16 1600");
         lumi.getResponse("mark 2");
 
-        assertEquals(" Okay, I've rescheduled this task:\n"
+        assertEquals(" Orbit adjusted. I've rescheduled this task:\n"
                         + "   [D][X] submit report (by: Oct 20 2019, 6:00PM)",
                 lumi.getResponse("snooze 2 /to 2019-10-20 1800"));
-        assertEquals(" Okay, I've rescheduled this task:\n"
+        assertEquals(" Orbit adjusted. I've rescheduled this task:\n"
                         + "   [E][ ] meeting (from: Oct 21 2019, 3:00PM"
                         + " to: Oct 21 2019, 5:00PM)",
                 lumi.getResponse("snooze 3 /to 2019-10-21 1500"));
-        assertEquals(" Hmm, only deadlines and events can be snoozed.",
+        assertEquals(" Signal unclear: only deadlines and events can be snoozed.",
                 lumi.getResponse("snooze 1 /to 2019-10-22"));
 
         Lumi reloadedLumi = new Lumi(dataFile);
-        assertEquals(" Here are the tasks in your list:\n"
+        assertEquals(" Here's your current constellation:\n"
                         + " 1.[T][ ] read book\n"
                         + " 2.[D][X] submit report (by: Oct 20 2019, 6:00PM)\n"
                         + " 3.[E][ ] meeting (from: Oct 21 2019, 3:00PM"
@@ -99,7 +99,7 @@ public class LumiTest {
         Lumi lumi = new Lumi(temporaryDirectory.resolve("lumi.txt"));
 
         assertTrue(lumi.isRunning());
-        assertEquals(" Bye for now! Keep shining, and I hope to see you again soon!",
+        assertEquals(" Until next time. Your tasks are safe here.",
                 lumi.getResponse("bye"));
         assertFalse(lumi.isRunning());
     }
@@ -110,9 +110,9 @@ public class LumiTest {
         Files.writeString(dataFile, "T | 1 | read book\ncorrupted record\n");
         Lumi lumi = new Lumi(dataFile);
 
-        assertEquals("I found 1 invalid line(s) in the saved task file and skipped them.",
+        assertEquals("I found 1 unreadable line(s) in your saved tasks and skipped them.",
                 lumi.getStartupMessage());
-        assertEquals(" Here are the tasks in your list:\n 1.[T][X] read book",
+        assertEquals(" Here's your current constellation:\n 1.[T][X] read book",
                 lumi.getResponse("list"));
     }
 }

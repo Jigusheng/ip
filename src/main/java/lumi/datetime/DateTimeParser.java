@@ -64,7 +64,7 @@ public final class DateTimeParser {
             }
         }
 
-        throw new LumiException("Hmm, use a date like 2019-10-15 or 2/12/2019, "
+        throw new LumiException("use a date like 2019-10-15 or 2/12/2019, "
                 + "optionally followed by a 24-hour time such as 1800.");
     }
 

@@ -3,6 +3,7 @@ package lumi.ui;
 import java.util.List;
 import java.util.Scanner;
 
+import lumi.exception.LumiException;
 import lumi.task.Task;
 
 /**
@@ -34,9 +35,9 @@ public class Ui {
     public void showWelcome() {
         showDivider();
         System.out.print(BANNER);
-        System.out.println("Hi there! I'm Lumi, your bright and bubbly chat buddy!");
-        System.out.println("I'm popping in to sprinkle a little cheer your way.");
-        System.out.println("What can I brighten up for you today?");
+        System.out.println("Hello. I'm Lumi, your guide through the little things.");
+        System.out.println("Let's chart one clear step at a time.");
+        System.out.println("What would you like to put on the map?");
     }
 
     /**
@@ -73,7 +74,7 @@ public class Ui {
 
     /** Shows the farewell message. */
     public void showGoodbye() {
-        System.out.println(" Bye for now! Keep shining, and I hope to see you again soon!");
+        System.out.println(" Until next time. Your tasks are safe here.");
     }
 
     /**
@@ -82,7 +83,7 @@ public class Ui {
      * @param tasks Tasks to display.
      */
     public void showTaskList(List<Task> tasks) {
-        System.out.println(" Here are the tasks in your list:");
+        System.out.println(" Here's your current constellation:");
         showNumberedTasks(tasks);
     }
 
@@ -92,7 +93,7 @@ public class Ui {
      * @param matchingTasks Matching tasks to display.
      */
     public void showMatchingTasks(List<Task> matchingTasks) {
-        System.out.println(" Here are the matching tasks in your list:");
+        System.out.println(" These tasks match your signal:");
         showNumberedTasks(matchingTasks);
     }
 
@@ -102,7 +103,7 @@ public class Ui {
      * @param task Task that was marked as complete.
      */
     public void showMarked(Task task) {
-        System.out.println(" Nice! I've marked this task as done:");
+        System.out.println(" A little brighter. This task is complete:");
         System.out.println("   " + task);
     }
 
@@ -112,7 +113,7 @@ public class Ui {
      * @param task Task that was marked as incomplete.
      */
     public void showUnmarked(Task task) {
-        System.out.println(" OK, I've marked this task as not done yet:");
+        System.out.println(" Back in orbit. This task is active again:");
         System.out.println("   " + task);
     }
 
@@ -123,7 +124,7 @@ public class Ui {
      * @param taskCount Number of remaining tasks.
      */
     public void showDeleted(Task task, int taskCount) {
-        System.out.println(" Noted. I've removed this task:");
+        System.out.println(" Cleared from the map. I've removed this task:");
         System.out.println("   " + task);
         showTaskCount(taskCount);
     }
@@ -135,7 +136,7 @@ public class Ui {
      * @param taskCount Number of stored tasks.
      */
     public void showAdded(Task task, int taskCount) {
-        System.out.println(" Got it. I've added this task:");
+        System.out.println(" It's on the map. I've added this task:");
         System.out.println("   " + task);
         showTaskCount(taskCount);
     }
@@ -146,7 +147,7 @@ public class Ui {
      * @param message User-friendly error explanation.
      */
     public void showError(String message) {
-        System.out.println(" " + message);
+        System.out.println(" " + LumiException.ERROR_PREFIX + message);
     }
 
     /**
@@ -156,22 +157,24 @@ public class Ui {
      */
     public void showSkippedFileLines(int skippedLineCount) {
         System.out.println("I found " + skippedLineCount
-                + " invalid line(s) in the saved task file and skipped them.");
+                + " unreadable line(s) in your saved tasks and skipped them.");
     }
 
     /** Shows a warning when saved tasks cannot be loaded. */
     public void showLoadingError() {
-        System.out.println("I couldn't load saved tasks, so I'm starting with an empty list.");
+        System.out.println("I couldn't open your saved tasks, so we're starting with a clear map.");
     }
 
     /** Shows a warning when changed tasks cannot be saved. */
     public void showSavingError() {
-        System.out.println(" Hmm, I couldn't save the latest task changes.");
+        System.out.println(" " + LumiException.ERROR_PREFIX
+                + "I couldn't save the latest task changes.");
     }
 
     /** Shows the task count after an addition or deletion. */
     private void showTaskCount(int taskCount) {
-        System.out.println(" Now you have " + taskCount + " tasks in the list.");
+        String taskWord = taskCount == 1 ? "task" : "tasks";
+        System.out.println(" Your map now holds " + taskCount + " " + taskWord + ".");
     }
 
     /** Shows tasks with one-based numbers in their displayed order. */

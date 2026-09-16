@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import lumi.Lumi;
@@ -21,8 +20,6 @@ public class MainWindow extends BorderPane {
     private TextField userInput;
     @FXML
     private Button sendButton;
-
-    private final Image lumiImage = new Image(getClass().getResourceAsStream("/images/DaLumi.png"));
 
     private Lumi lumi;
 
@@ -46,7 +43,7 @@ public class MainWindow extends BorderPane {
         this.lumi = lumi;
         if (!lumi.getStartupMessage().isEmpty()) {
             dialogContainer.getChildren().add(
-                    DialogBox.getLumiDialog(lumi.getStartupMessage(), lumiImage));
+                    DialogBox.getLumiDialog(lumi.getStartupMessage()));
         }
     }
 
@@ -60,7 +57,7 @@ public class MainWindow extends BorderPane {
         String response = lumi.getResponse(input);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input),
-                DialogBox.getLumiDialog(response, lumiImage)
+                DialogBox.getLumiDialog(response)
         );
         userInput.clear();
         if (!lumi.isRunning()) {

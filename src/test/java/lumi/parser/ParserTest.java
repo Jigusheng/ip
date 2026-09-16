@@ -55,12 +55,12 @@ public class ParserTest {
 
     @Test
     public void parseCommandType_emptyInput_exceptionThrown() {
-        assertLumiExceptionMessage("Hmm, please enter a command.", () -> Parser.parseCommandType(""));
+        assertLumiExceptionMessage("Signal unclear: please enter a command.", () -> Parser.parseCommandType(""));
     }
 
     @Test
     public void parseCommandType_unknownPartialOrExtraInput_exceptionThrown() {
-        String expectedMessage = "Hmm, I don't recognize that command. "
+        String expectedMessage = "Signal unclear: I don't recognize that command. "
                 + "Try todo, deadline, event, list, find, mark, unmark, delete, snooze, or bye.";
 
         assertLumiExceptionMessage(expectedMessage, () -> Parser.parseCommandType("unknown"));
@@ -80,9 +80,9 @@ public class ParserTest {
     @Test
     public void parseFindKeyword_missingKeyword_exceptionThrown() {
         assertLumiExceptionMessage(
-                "Hmm, tell me what to find. Try: find <keyword>", () -> Parser.parseFindKeyword("find"));
+                "Signal unclear: tell me what to find. Try: find <keyword>", () -> Parser.parseFindKeyword("find"));
         assertLumiExceptionMessage(
-                "Hmm, tell me what to find. Try: find <keyword>", () -> Parser.parseFindKeyword("find   "));
+                "Signal unclear: tell me what to find. Try: find <keyword>", () -> Parser.parseFindKeyword("find   "));
     }
 
     @Test
@@ -97,9 +97,9 @@ public class ParserTest {
 
     @Test
     public void parseSnoozeRequest_invalidSyntax_exceptionThrown() {
-        String missingTaskMessage = "Hmm, tell me which task to snooze. "
+        String missingTaskMessage = "Signal unclear: tell me which task to snooze. "
                 + "Try: snooze <task number> /to <when>";
-        String missingDateMessage = "Hmm, tell me when to snooze the task until. "
+        String missingDateMessage = "Signal unclear: tell me when to snooze the task until. "
                 + "Try: snooze <task number> /to <when>";
 
         assertLumiExceptionMessage(missingTaskMessage, () ->
@@ -110,22 +110,22 @@ public class ParserTest {
                 Parser.parseSnoozeRequest("snooze 2", 3));
         assertLumiExceptionMessage(missingDateMessage, () ->
                 Parser.parseSnoozeRequest("snooze 2 /towards 2019-10-20", 3));
-        assertLumiExceptionMessage("Hmm, the /to value cannot be empty.", () ->
+        assertLumiExceptionMessage("Signal unclear: the /to value cannot be empty.", () ->
                 Parser.parseSnoozeRequest("snooze 2 /to", 3));
     }
 
     @Test
     public void parseSnoozeRequest_invalidTaskNumberOrDate_exceptionThrown() {
-        assertLumiExceptionMessage("Hmm, the task number must be a whole number.", () ->
+        assertLumiExceptionMessage("Signal unclear: the task number must be a whole number.", () ->
                 Parser.parseSnoozeRequest("snooze first /to 2019-10-20", 3));
-        assertLumiExceptionMessage("Hmm, choose a task number from 1 to 3.", () ->
+        assertLumiExceptionMessage("Signal unclear: choose a task number from 1 to 3.", () ->
                 Parser.parseSnoozeRequest("snooze 0 /to 2019-10-20", 3));
-        assertLumiExceptionMessage("Hmm, choose a task number from 1 to 3.", () ->
+        assertLumiExceptionMessage("Signal unclear: choose a task number from 1 to 3.", () ->
                 Parser.parseSnoozeRequest("snooze 4 /to 2019-10-20", 3));
-        assertLumiExceptionMessage("Hmm, there are no tasks to snooze yet.", () ->
+        assertLumiExceptionMessage("Signal unclear: there are no tasks to snooze yet.", () ->
                 Parser.parseSnoozeRequest("snooze 1 /to 2019-10-20", 0));
         assertLumiExceptionMessage(
-                "Hmm, use a date like 2019-10-15 or 2/12/2019, "
+                "Signal unclear: use a date like 2019-10-15 or 2/12/2019, "
                         + "optionally followed by a 24-hour time such as 1800.", () ->
                                 Parser.parseSnoozeRequest("snooze 2 /to 2019-02-29", 3));
     }
@@ -174,55 +174,55 @@ public class ParserTest {
 
     @Test
     public void parseTask_todoWithoutDescription_exceptionThrown() {
-        assertLumiExceptionMessage("Hmm, a todo needs a description. Try: todo <description>", () ->
+        assertLumiExceptionMessage("Signal unclear: a todo needs a description. Try: todo <description>", () ->
                 Parser.parseTask("todo   ", CommandType.TODO));
     }
 
     @Test
     public void parseTask_malformedDeadline_exceptionThrown() {
         assertLumiExceptionMessage(
-                "Hmm, a deadline needs a due date. "
+                "Signal unclear: a deadline needs a due date. "
                         + "Try: deadline <description> /by <when>", () ->
                                 Parser.parseTask("deadline return book", CommandType.DEADLINE));
         assertLumiExceptionMessage(
-                "Hmm, a deadline needs a due date. "
+                "Signal unclear: a deadline needs a due date. "
                         + "Try: deadline <description> /by <when>", () -> Parser.parseTask(
                         "deadline return book /bypass tomorrow", CommandType.DEADLINE));
         assertLumiExceptionMessage(
-                "Hmm, a deadline needs a description before /by.", () ->
+                "Signal unclear: a deadline needs a description before /by.", () ->
                         Parser.parseTask("deadline /by 2019-10-15", CommandType.DEADLINE));
-        assertLumiExceptionMessage("Hmm, the /by value cannot be empty.", () ->
+        assertLumiExceptionMessage("Signal unclear: the /by value cannot be empty.", () ->
                 Parser.parseTask("deadline return book /by", CommandType.DEADLINE));
     }
 
     @Test
     public void parseTask_malformedEvent_exceptionThrown() {
-        String missingDetailsMessage = "Hmm, an event needs start and end details. "
+        String missingDetailsMessage = "Signal unclear: an event needs start and end details. "
                 + "Try: event <description> /from <start> /to <end>";
 
         assertLumiExceptionMessage(missingDetailsMessage, () -> Parser.parseTask("event meeting", CommandType.EVENT));
         assertLumiExceptionMessage(missingDetailsMessage, () -> Parser.parseTask(
                         "event meeting /to Tuesday /from Monday", CommandType.EVENT));
         assertLumiExceptionMessage(
-                "Hmm, an event needs a description before /from.", () -> Parser.parseTask(
+                "Signal unclear: an event needs a description before /from.", () -> Parser.parseTask(
                         "event /from 2019-10-15 /to 2019-10-16", CommandType.EVENT));
-        assertLumiExceptionMessage("Hmm, the /from value cannot be empty.", () -> Parser.parseTask(
+        assertLumiExceptionMessage("Signal unclear: the /from value cannot be empty.", () -> Parser.parseTask(
                         "event meeting /from /to 2019-10-16", CommandType.EVENT));
-        assertLumiExceptionMessage("Hmm, the /to value cannot be empty.", () -> Parser.parseTask(
+        assertLumiExceptionMessage("Signal unclear: the /to value cannot be empty.", () -> Parser.parseTask(
                         "event meeting /from 2019-10-15 /to", CommandType.EVENT));
     }
 
     @Test
     public void parseTask_invalidDate_exceptionThrown() {
         assertLumiExceptionMessage(
-                "Hmm, use a date like 2019-10-15 or 2/12/2019, "
+                "Signal unclear: use a date like 2019-10-15 or 2/12/2019, "
                         + "optionally followed by a 24-hour time such as 1800.", () -> Parser.parseTask(
                         "deadline impossible /by 2019-02-29", CommandType.DEADLINE));
     }
 
     @Test
     public void parseTask_nonTaskCommandType_exceptionThrown() {
-        assertLumiExceptionMessage("Hmm, I don't recognize that task type.", () ->
+        assertLumiExceptionMessage("Signal unclear: I don't recognize that task type.", () ->
                 Parser.parseTask("list", CommandType.LIST));
     }
 
@@ -237,19 +237,19 @@ public class ParserTest {
     @Test
     public void parseTaskIndex_missingNumber_actionSpecificExceptionThrown() {
         assertLumiExceptionMessage(
-                "Hmm, tell me which task to mark. Try: mark <task number>", () ->
+                "Signal unclear: tell me which task to mark. Try: mark <task number>", () ->
                         Parser.parseTaskIndex("mark", CommandType.MARK, 1));
         assertLumiExceptionMessage(
-                "Hmm, tell me which task to unmark. Try: unmark <task number>", () ->
+                "Signal unclear: tell me which task to unmark. Try: unmark <task number>", () ->
                         Parser.parseTaskIndex("unmark   ", CommandType.UNMARK, 1));
         assertLumiExceptionMessage(
-                "Hmm, tell me which task to delete. Try: delete <task number>", () ->
+                "Signal unclear: tell me which task to delete. Try: delete <task number>", () ->
                         Parser.parseTaskIndex("delete", CommandType.DELETE, 1));
     }
 
     @Test
     public void parseTaskIndex_nonWholeNumber_exceptionThrown() {
-        String expectedMessage = "Hmm, the task number must be a whole number.";
+        String expectedMessage = "Signal unclear: the task number must be a whole number.";
 
         assertLumiExceptionMessage(expectedMessage, () -> Parser.parseTaskIndex("mark first", CommandType.MARK, 3));
         assertLumiExceptionMessage(expectedMessage, () -> Parser.parseTaskIndex("mark 1.5", CommandType.MARK, 3));
@@ -260,13 +260,13 @@ public class ParserTest {
 
     @Test
     public void parseTaskIndex_emptyTaskList_exceptionThrown() {
-        assertLumiExceptionMessage("Hmm, there are no tasks to delete yet.", () ->
+        assertLumiExceptionMessage("Signal unclear: there are no tasks to delete yet.", () ->
                 Parser.parseTaskIndex("delete 1", CommandType.DELETE, 0));
     }
 
     @Test
     public void parseTaskIndex_numberOutsideList_exceptionThrown() {
-        String expectedMessage = "Hmm, choose a task number from 1 to 3.";
+        String expectedMessage = "Signal unclear: choose a task number from 1 to 3.";
 
         assertLumiExceptionMessage(expectedMessage, () -> Parser.parseTaskIndex("mark 0", CommandType.MARK, 3));
         assertLumiExceptionMessage(expectedMessage, () -> Parser.parseTaskIndex("mark -1", CommandType.MARK, 3));

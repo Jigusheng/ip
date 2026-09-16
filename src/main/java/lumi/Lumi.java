@@ -23,7 +23,7 @@ public final class Lumi {
 
     /** Farewell returned when the user ends the current Lumi session. */
     private static final String GOODBYE_MESSAGE =
-            " Bye for now! Keep shining, and I hope to see you again soon!";
+            " Until next time. Your tasks are safe here.";
 
     /** Storage used to load and save the current task list. */
     private final Storage storage;
@@ -59,10 +59,10 @@ public final class Lumi {
             tasks.addAll(loadResult.tasks());
             if (loadResult.skippedLineCount() > 0) {
                 loadMessage = "I found " + loadResult.skippedLineCount()
-                        + " invalid line(s) in the saved task file and skipped them.";
+                        + " unreadable line(s) in your saved tasks and skipped them.";
             }
         } catch (IOException error) {
-            loadMessage = "I couldn't load saved tasks, so I'm starting with an empty list.";
+            loadMessage = "I couldn't open your saved tasks, so we're starting with a clear map.";
         }
         startupMessage = loadMessage;
     }
@@ -101,26 +101,26 @@ public final class Lumi {
             }
 
             if (commandType == CommandType.LIST) {
-                return formatNumberedTasks("Here are the tasks in your list:", tasks);
+                return formatNumberedTasks("Here's your current constellation:", tasks);
             }
             if (commandType == CommandType.FIND) {
                 String keyword = Parser.parseFindKeyword(command);
                 List<Task> matchingTasks = tasks.stream()
                         .filter(task -> task.hasDescriptionContaining(keyword))
                         .toList();
-                return formatNumberedTasks("Here are the matching tasks in your list:", matchingTasks);
+                return formatNumberedTasks("These tasks match your signal:", matchingTasks);
             }
             if (commandType == CommandType.MARK) {
                 int taskIndex = getTaskIndex(command, commandType);
                 Task task = tasks.get(taskIndex);
                 task.markAsDone();
-                return saveTasks(" Nice! I've marked this task as done:\n   " + task);
+                return saveTasks(" A little brighter. This task is complete:\n   " + task);
             }
             if (commandType == CommandType.UNMARK) {
                 int taskIndex = getTaskIndex(command, commandType);
                 Task task = tasks.get(taskIndex);
                 task.markAsNotDone();
-                return saveTasks(" OK, I've marked this task as not done yet:\n   " + task);
+                return saveTasks(" Back in orbit. This task is active again:\n   " + task);
             }
             if (commandType == CommandType.SNOOZE) {
                 return snoozeTask(command);
@@ -131,8 +131,8 @@ public final class Lumi {
                 Task removedTask = tasks.remove(taskIndex);
                 assert tasks.size() == previousTaskCount - 1
                         : "Deleting one task must reduce the task count by one";
-                String response = " Noted. I've removed this task:\n   " + removedTask
-                        + "\n Now you have " + tasks.size() + " tasks in the list.";
+                String response = " Cleared from the map. I've removed this task:\n   " + removedTask
+                        + formatTaskCount();
                 return saveTasks(response);
             }
             if (commandType == CommandType.TODO
@@ -143,11 +143,11 @@ public final class Lumi {
                 tasks.add(newTask);
                 assert tasks.size() == previousTaskCount + 1
                         : "Adding one task must increase the task count by one";
-                String response = " Got it. I've added this task:\n   " + newTask
-                        + "\n Now you have " + tasks.size() + " tasks in the list.";
+                String response = " It's on the map. I've added this task:\n   " + newTask
+                        + formatTaskCount();
                 return saveTasks(response);
             }
-            throw new LumiException("Hmm, I don't recognize that command.");
+            throw new LumiException("I don't recognize that command.");
         } catch (LumiException error) {
             return " " + error.getMessage();
         }
@@ -217,9 +217,9 @@ public final class Lumi {
         } else if (task instanceof Event event) {
             event.reschedule(request.newDateTime());
         } else {
-            throw new LumiException("Hmm, only deadlines and events can be snoozed.");
+            throw new LumiException("only deadlines and events can be snoozed.");
         }
-        return saveTasks(" Okay, I've rescheduled this task:\n   " + task);
+        return saveTasks(" Orbit adjusted. I've rescheduled this task:\n   " + task);
     }
 
     /**
@@ -233,7 +233,14 @@ public final class Lumi {
             storage.save(tasks);
             return response;
         } catch (IOException error) {
-            return response + "\n Hmm, I couldn't save the latest task changes.";
+            return response + "\n " + LumiException.ERROR_PREFIX
+                    + "I couldn't save the latest task changes.";
         }
+    }
+
+    /** Formats the task count with correct singular or plural grammar. */
+    private String formatTaskCount() {
+        String taskWord = tasks.size() == 1 ? "task" : "tasks";
+        return "\n Your map now holds " + tasks.size() + " " + taskWord + ".";
     }
 }

@@ -1,6 +1,8 @@
 # Lumi project
 
-This is a project template for a greenfield Java project called _Lumi_. Given below are instructions on how to use it.
+Lumi is a calm, celestial task navigator that helps users chart one clear step at a time. Its concise language and
+midnight-inspired interface keep task management friendly without distracting from the work. Given below are
+instructions on how to use it.
 
 ## Setting up in Intellij
 
@@ -50,11 +52,11 @@ On macOS or Linux:
 java -jar build/libs/lumi.jar
 ```
 
-The GUI includes the responsive layout and core CSS tweaks from JavaFX tutorial Part 5. Its FXML views are in
-`src/main/resources/view`, while the linked stylesheets are in `src/main/resources/css`. The GUI and console share the
-same task list, saved data, and command handling. Both interfaces support `todo`, `deadline`, `event`, `list`, `find`,
-`mark`, `unmark`, `delete`, `snooze`, and `bye`. Use `snooze <task number> /to <date/time>` to move a deadline or
-event to a new date or time. Lumi preserves the duration when moving an event.
+The responsive GUI uses a midnight, lavender, and warm-gold palette with a compact Lumi monogram. Its FXML views are
+in `src/main/resources/view`, while the linked stylesheets are in `src/main/resources/css`. The GUI and console share
+the same task list, saved data, and command handling. Both interfaces support `todo`, `deadline`, `event`, `list`,
+`find`, `mark`, `unmark`, `delete`, `snooze`, and `bye`. Use `snooze <task number> /to <date/time>` to move a deadline
+or event to a new date or time. Lumi preserves the duration when moving an event.
 
 In IntelliJ, you can build the same JAR by opening the Gradle tool window, finding the `shadowJar` task, and running it. Refresh the project view afterward if the `build` folder is not immediately visible.
 

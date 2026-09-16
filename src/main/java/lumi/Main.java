@@ -28,7 +28,7 @@ public class Main extends Application {
         Scene scene = new Scene(mainLayout);
         stage.setScene(scene);
         fxmlLoader.<MainWindow>getController().setLumi(lumi);
-        stage.setTitle("Lumi");
+        stage.setTitle("Lumi — Task Navigator");
         stage.setMinHeight(360);
         stage.setMinWidth(320);
         stage.setResizable(true);

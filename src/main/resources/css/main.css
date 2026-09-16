@@ -1,37 +1,47 @@
 .root {
     -fx-font-family: "Segoe UI";
-    -fx-background-color: #f5f7fb;
+    -fx-background-color: #f4f3fa;
 }
 
 .app-shell {
-    -fx-background-color: #f5f7fb;
+    -fx-background-color: #f4f3fa;
 }
 
 .app-header {
     -fx-padding: 10px 14px 9px 14px;
-    -fx-background-color: #ffffff;
-    -fx-border-color: transparent transparent #e2e8f0 transparent;
+    -fx-background-color: #20243d;
+    -fx-border-color: transparent transparent #303653 transparent;
     -fx-border-width: 0 0 1px 0;
 }
 
 .app-title {
+    -fx-font-family: "Georgia";
     -fx-font-size: 17px;
     -fx-font-weight: 700;
-    -fx-text-fill: #172033;
+    -fx-text-fill: #fffaf0;
 }
 
 .app-subtitle {
     -fx-font-size: 11px;
-    -fx-text-fill: #64748b;
+    -fx-text-fill: #bcc5e5;
+}
+
+.header-mark {
+    -fx-background-color: #f4c95d;
+    -fx-background-radius: 16px;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 17px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #20243d;
 }
 
 .dialog-container {
-    -fx-background-color: #f5f7fb;
+    -fx-background-color: #f4f3fa;
 }
 
 .scroll-pane,
 .scroll-pane > .viewport {
-    -fx-background-color: #f5f7fb;
+    -fx-background-color: #f4f3fa;
 }
 
 .scroll-pane {
@@ -41,34 +51,34 @@
 
 .composer {
     -fx-padding: 10px 12px;
-    -fx-background-color: #ffffff;
-    -fx-border-color: #e2e8f0 transparent transparent transparent;
+    -fx-background-color: #fbfaff;
+    -fx-border-color: #dedcf0 transparent transparent transparent;
     -fx-border-width: 1px 0 0 0;
 }
 
 .text-field {
     -fx-min-height: 38px;
     -fx-padding: 8px 11px;
-    -fx-background-color: #f8fafc;
+    -fx-background-color: #ffffff;
     -fx-background-radius: 9px;
-    -fx-border-color: #cbd5e1;
+    -fx-border-color: #c9c8dc;
     -fx-border-radius: 9px;
     -fx-font-size: 13px;
-    -fx-prompt-text-fill: #94a3b8;
-    -fx-text-fill: #172033;
+    -fx-prompt-text-fill: #8989a3;
+    -fx-text-fill: #20243d;
 }
 
 .text-field:focused {
     -fx-background-color: #ffffff;
-    -fx-border-color: #6366f1;
-    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.18), 5, 0.2, 0, 0);
+    -fx-border-color: #5b63b7;
+    -fx-effect: dropshadow(gaussian, rgba(91, 99, 183, 0.2), 5, 0.2, 0, 0);
 }
 
 .button {
     -fx-min-height: 38px;
     -fx-min-width: 66px;
     -fx-padding: 8px 15px;
-    -fx-background-color: #4f46e5;
+    -fx-background-color: #5962b0;
     -fx-background-radius: 9px;
     -fx-font-size: 13px;
     -fx-font-weight: 700;
@@ -77,11 +87,11 @@
 }
 
 .button:hover {
-    -fx-background-color: #4338ca;
+    -fx-background-color: #485199;
 }
 
 .button:pressed {
-    -fx-background-color: #3730a3;
+    -fx-background-color: #373f7c;
 }
 
 .button:disabled {
@@ -98,7 +108,7 @@
 }
 
 .scroll-bar .thumb {
-    -fx-background-color: #cbd5e1;
+    -fx-background-color: #bbb9d1;
     -fx-background-insets: 2px;
     -fx-background-radius: 8px;
 }

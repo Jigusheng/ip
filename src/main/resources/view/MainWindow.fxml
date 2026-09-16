@@ -20,12 +20,21 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="lumi.ui.MainWindow">
     <top>
-        <VBox styleClass="app-header">
+        <HBox alignment="CENTER_LEFT" spacing="9.0" styleClass="app-header">
             <children>
-                <Label styleClass="app-title" text="Lumi" />
-                <Label styleClass="app-subtitle" text="Your task companion" />
+                <Label alignment="CENTER"
+                       minHeight="32.0"
+                       minWidth="32.0"
+                       styleClass="header-mark"
+                       text="L" />
+                <VBox>
+                    <children>
+                        <Label styleClass="app-title" text="Lumi" />
+                        <Label styleClass="app-subtitle" text="Your calm task navigator" />
+                    </children>
+                </VBox>
             </children>
-        </VBox>
+        </HBox>
     </top>
     <center>
         <ScrollPane fx:id="scrollPane"

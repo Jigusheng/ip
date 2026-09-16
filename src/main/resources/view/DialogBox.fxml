@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Circle?>
 
 <fx:root alignment="TOP_LEFT"
          maxHeight="1.7976931348623157E308"
@@ -15,11 +16,16 @@
          xmlns="http://javafx.com/javafx/17"
          xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <ImageView fx:id="displayPicture"
-                   fitHeight="32.0"
-                   fitWidth="32.0"
-                   pickOnBounds="true"
-                   preserveRatio="true" />
+        <StackPane fx:id="botMark"
+                   minHeight="32.0"
+                   minWidth="32.0"
+                   prefHeight="32.0"
+                   prefWidth="32.0">
+            <children>
+                <Circle radius="16.0" styleClass="bot-mark-background" />
+                <Label styleClass="bot-mark-letter" text="L" />
+            </children>
+        </StackPane>
         <Label fx:id="dialog"
                minHeight="-Infinity"
                styleClass="message-label"

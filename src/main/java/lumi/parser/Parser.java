@@ -38,7 +38,7 @@ public final class Parser {
      */
     public static CommandType parseCommandType(String input) throws LumiException {
         if (input.isEmpty()) {
-            throw new LumiException("Hmm, please enter a command.");
+            throw new LumiException("please enter a command.");
         }
 
         for (CommandType commandType : CommandType.values()) {
@@ -48,7 +48,7 @@ public final class Parser {
                 return commandType;
             }
         }
-        throw new LumiException("Hmm, I don't recognize that command. "
+        throw new LumiException("I don't recognize that command. "
                 + "Try todo, deadline, event, list, find, mark, unmark, delete, snooze, or bye.");
     }
 
@@ -70,7 +70,7 @@ public final class Parser {
             case EVENT:
                 return parseEvent(extractCommandDetails(command, commandType));
             default:
-                throw new LumiException("Hmm, I don't recognize that task type.");
+                throw new LumiException("I don't recognize that task type.");
         }
     }
 
@@ -82,7 +82,7 @@ public final class Parser {
     /** Creates a to-do after validating its description. */
     private static Todo parseTodo(String description) throws LumiException {
         if (description.isEmpty()) {
-            throw new LumiException("Hmm, a todo needs a description. "
+            throw new LumiException("a todo needs a description. "
                     + "Try: todo <description>");
         }
         return new Todo(description);
@@ -92,7 +92,7 @@ public final class Parser {
     private static Deadline parseDeadline(String details) throws LumiException {
         int separatorPosition = findSeparator(details, DEADLINE_SEPARATOR, 0);
         if (separatorPosition < 0) {
-            throw new LumiException("Hmm, a deadline needs a due date. "
+            throw new LumiException("a deadline needs a due date. "
                     + "Try: deadline <description> /by <when>");
         }
 
@@ -100,10 +100,10 @@ public final class Parser {
         String dueDateText = details.substring(
                 separatorPosition + DEADLINE_SEPARATOR.length()).trim();
         if (description.isEmpty()) {
-            throw new LumiException("Hmm, a deadline needs a description before /by.");
+            throw new LumiException("a deadline needs a description before /by.");
         }
         if (dueDateText.isEmpty()) {
-            throw new LumiException("Hmm, the /by value cannot be empty.");
+            throw new LumiException("the /by value cannot be empty.");
         }
         return new Deadline(description, DateTimeParser.parseUserInput(dueDateText));
     }
@@ -116,7 +116,7 @@ public final class Parser {
                 : findSeparator(details, TO_SEPARATOR,
                         startSeparatorPosition + EVENT_START_SEPARATOR.length());
         if (startSeparatorPosition < 0 || endSeparatorPosition < 0) {
-            throw new LumiException("Hmm, an event needs start and end details. "
+            throw new LumiException("an event needs start and end details. "
                     + "Try: event <description> /from <start> /to <end>");
         }
 
@@ -126,13 +126,13 @@ public final class Parser {
         String endDateText = details.substring(
                 endSeparatorPosition + TO_SEPARATOR.length()).trim();
         if (description.isEmpty()) {
-            throw new LumiException("Hmm, an event needs a description before /from.");
+            throw new LumiException("an event needs a description before /from.");
         }
         if (startDateText.isEmpty()) {
-            throw new LumiException("Hmm, the /from value cannot be empty.");
+            throw new LumiException("the /from value cannot be empty.");
         }
         if (endDateText.isEmpty()) {
-            throw new LumiException("Hmm, the /to value cannot be empty.");
+            throw new LumiException("the /to value cannot be empty.");
         }
         return new Event(description, DateTimeParser.parseUserInput(startDateText),
                 DateTimeParser.parseUserInput(endDateText));
@@ -148,7 +148,7 @@ public final class Parser {
     public static String parseFindKeyword(String command) throws LumiException {
         String keyword = command.substring(CommandType.FIND.getKeyword().length()).trim();
         if (keyword.isEmpty()) {
-            throw new LumiException("Hmm, tell me what to find. Try: find <keyword>");
+            throw new LumiException("tell me what to find. Try: find <keyword>");
         }
         return keyword;
     }
@@ -165,19 +165,19 @@ public final class Parser {
             throws LumiException {
         String details = extractCommandDetails(command, CommandType.SNOOZE);
         if (details.isEmpty()) {
-            throw new LumiException("Hmm, tell me which task to snooze. "
+            throw new LumiException("tell me which task to snooze. "
                     + "Try: snooze <task number> /to <when>");
         }
 
         int separatorPosition = findSeparator(details, TO_SEPARATOR, 0);
         if (separatorPosition < 0) {
-            throw new LumiException("Hmm, tell me when to snooze the task until. "
+            throw new LumiException("tell me when to snooze the task until. "
                     + "Try: snooze <task number> /to <when>");
         }
 
         String taskNumberText = details.substring(0, separatorPosition).trim();
         if (taskNumberText.isEmpty()) {
-            throw new LumiException("Hmm, tell me which task to snooze. "
+            throw new LumiException("tell me which task to snooze. "
                     + "Try: snooze <task number> /to <when>");
         }
 
@@ -185,7 +185,7 @@ public final class Parser {
                 CommandType.SNOOZE, taskCount);
         String newDateTimeText = details.substring(separatorPosition + TO_SEPARATOR.length()).trim();
         if (newDateTimeText.isEmpty()) {
-            throw new LumiException("Hmm, the /to value cannot be empty.");
+            throw new LumiException("the /to value cannot be empty.");
         }
         return new SnoozeRequest(taskIndex, DateTimeParser.parseUserInput(newDateTimeText));
     }
@@ -204,7 +204,7 @@ public final class Parser {
         String action = commandType.getKeyword();
         String argument = command.substring(action.length()).trim();
         if (argument.isEmpty()) {
-            throw new LumiException("Hmm, tell me which task to " + action
+            throw new LumiException("tell me which task to " + action
                     + ". Try: " + action + " <task number>");
         }
 
@@ -212,14 +212,14 @@ public final class Parser {
         try {
             taskNumber = Integer.parseInt(argument);
         } catch (NumberFormatException error) {
-            throw new LumiException("Hmm, the task number must be a whole number.");
+            throw new LumiException("the task number must be a whole number.");
         }
 
         if (taskCount == 0) {
-            throw new LumiException("Hmm, there are no tasks to " + action + " yet.");
+            throw new LumiException("there are no tasks to " + action + " yet.");
         }
         if (taskNumber < 1 || taskNumber > taskCount) {
-            throw new LumiException("Hmm, choose a task number from 1 to " + taskCount + ".");
+            throw new LumiException("choose a task number from 1 to " + taskCount + ".");
         }
         assert taskNumber >= 1 && taskNumber <= taskCount
                 : "Validated task numbers must be within the current task list";

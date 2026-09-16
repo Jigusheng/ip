@@ -7,10 +7,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.shape.Circle;
+import javafx.scene.layout.StackPane;
+import lumi.exception.LumiException;
 
 /**
  * Displays a compact chat message using sender-specific presentation.
@@ -22,15 +21,14 @@ public class DialogBox extends HBox {
     @FXML
     private Label dialog;
     @FXML
-    private ImageView displayPicture;
+    private StackPane botMark;
 
     /**
      * Creates a dialog box for a message and its sender.
      *
      * @param message Message to display.
-     * @param image Sender's profile image.
      */
-    private DialogBox(String message, Image image) {
+    private DialogBox(String message) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource("/view/DialogBox.fxml"));
             fxmlLoader.setController(this);
@@ -41,10 +39,8 @@ public class DialogBox extends HBox {
         }
 
         assert dialog != null : "DialogBox.fxml must inject dialog";
-        assert displayPicture != null : "DialogBox.fxml must inject displayPicture";
+        assert botMark != null : "DialogBox.fxml must inject botMark";
         dialog.setText(message.strip());
-        displayPicture.setImage(image);
-        displayPicture.setClip(new Circle(16, 16, 16));
     }
 
     /**
@@ -54,10 +50,10 @@ public class DialogBox extends HBox {
      * @return Right-aligned user dialog.
      */
     public static DialogBox getUserDialog(String message) {
-        DialogBox dialogBox = new DialogBox(message, null);
+        DialogBox dialogBox = new DialogBox(message);
         dialogBox.setAlignment(Pos.TOP_RIGHT);
-        dialogBox.displayPicture.setManaged(false);
-        dialogBox.displayPicture.setVisible(false);
+        dialogBox.botMark.setManaged(false);
+        dialogBox.botMark.setVisible(false);
         dialogBox.dialog.getStyleClass().add("user-message");
         dialogBox.dialog.maxWidthProperty().bind(Bindings.max(
                 140, dialogBox.widthProperty().multiply(USER_MESSAGE_WIDTH_RATIO)));
@@ -68,12 +64,11 @@ public class DialogBox extends HBox {
      * Creates a left-aligned dialog for a response from Lumi.
      *
      * @param message Lumi's response.
-     * @param image Lumi's profile image.
      * @return Left-aligned Lumi dialog.
      */
-    public static DialogBox getLumiDialog(String message, Image image) {
-        DialogBox dialogBox = new DialogBox(message, image);
-        dialogBox.displayPicture.setAccessibleText("Lumi");
+    public static DialogBox getLumiDialog(String message) {
+        DialogBox dialogBox = new DialogBox(message);
+        dialogBox.botMark.setAccessibleText("Lumi");
         dialogBox.dialog.maxWidthProperty().bind(Bindings.max(
                 180, dialogBox.widthProperty().subtract(ASSISTANT_ROW_NON_MESSAGE_WIDTH)));
         if (isErrorMessage(message)) {
@@ -94,6 +89,6 @@ public class DialogBox extends HBox {
     static boolean isErrorMessage(String message) {
         return message.lines()
                 .map(String::stripLeading)
-                .anyMatch(line -> line.startsWith("Hmm,"));
+                .anyMatch(line -> line.startsWith(LumiException.ERROR_PREFIX));
     }
 }

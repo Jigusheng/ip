@@ -48,7 +48,7 @@ public class DateTimeParserTest {
             LumiException exception = assertThrows(LumiException.class, () ->
                     DateTimeParser.parseUserInput(value), "Value: " + value);
             assertEquals(
-                    "Hmm, use a date like 2019-10-15 or 2/12/2019, "
+                    "Signal unclear: use a date like 2019-10-15 or 2/12/2019, "
                             + "optionally followed by a 24-hour time such as 1800.",
                     exception.getMessage(), "Value: " + value);
         }
