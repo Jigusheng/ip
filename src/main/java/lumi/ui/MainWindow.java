@@ -5,14 +5,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import lumi.Lumi;
 
 /**
  * Controls Lumi's main graphical interface.
  */
-public class MainWindow extends AnchorPane {
+public class MainWindow extends BorderPane {
     @FXML
     private ScrollPane scrollPane;
     @FXML
@@ -22,7 +22,6 @@ public class MainWindow extends AnchorPane {
     @FXML
     private Button sendButton;
 
-    private final Image userImage = new Image(getClass().getResourceAsStream("/images/DaUser.png"));
     private final Image lumiImage = new Image(getClass().getResourceAsStream("/images/DaLumi.png"));
 
     private Lumi lumi;
@@ -60,13 +59,15 @@ public class MainWindow extends AnchorPane {
         String input = userInput.getText();
         String response = lumi.getResponse(input);
         dialogContainer.getChildren().addAll(
-                DialogBox.getUserDialog(input, userImage),
+                DialogBox.getUserDialog(input),
                 DialogBox.getLumiDialog(response, lumiImage)
         );
         userInput.clear();
         if (!lumi.isRunning()) {
             userInput.setDisable(true);
             sendButton.setDisable(true);
+        } else {
+            userInput.requestFocus();
         }
     }
 }

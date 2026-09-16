@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lumi.ui.MainWindow;
 
@@ -24,13 +24,14 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
-        AnchorPane mainLayout = fxmlLoader.load();
+        Parent mainLayout = fxmlLoader.load();
         Scene scene = new Scene(mainLayout);
         stage.setScene(scene);
         fxmlLoader.<MainWindow>getController().setLumi(lumi);
         stage.setTitle("Lumi");
-        stage.setMinHeight(220);
-        stage.setMinWidth(417);
+        stage.setMinHeight(360);
+        stage.setMinWidth(320);
+        stage.setResizable(true);
         stage.show();
     }
 }
